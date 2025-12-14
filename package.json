@@ -2,11 +2,13 @@
   "name": "portfolio-infrastructure",
   "version": "1.0.0",
   "description": "Full-stack professional portfolio on Cloudflare infrastructure",
-  "type": "module",
   "scripts": {
-    "dev": "wrangler pages dev src --compatibility-date=2024-01-01",
-    "deploy": "wrangler pages deploy src",
-    "deploy:worker": "wrangler deploy",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "pages:dev": "wrangler pages dev .next --compatibility-date=2024-01-01",
+    "pages:build": "next build",
+    "pages:deploy": "npm run pages:build && wrangler pages deploy .next",
     "d1:create": "wrangler d1 create portfolio-db",
     "d1:init": "wrangler d1 execute portfolio-db --file=./schema.sql",
     "d1:query": "wrangler d1 execute portfolio-db --command",
@@ -18,11 +20,19 @@
     "workers",
     "d1",
     "r2",
-    "pages"
+    "pages",
+    "nextjs",
+    "react"
   ],
   "author": "",
   "license": "MIT",
+  "dependencies": {
+    "next": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
   "devDependencies": {
-    "wrangler": "^3.78.0"
+    "wrangler": "^3.78.0",
+    "@cloudflare/next-on-pages": "^1.13.5"
   }
 }
