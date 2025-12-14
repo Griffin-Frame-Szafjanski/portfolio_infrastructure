@@ -74,6 +74,25 @@ VALUES (
     'City, Country'
 );
 
+-- ============================================
+-- Admin Users Table
+-- Stores admin authentication credentials
+-- ============================================
+CREATE TABLE IF NOT EXISTS admin_users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,        -- Bcrypt hashed password
+    email TEXT NOT NULL,
+    last_login DATETIME,
+    failed_login_attempts INTEGER DEFAULT 0,
+    locked_until DATETIME,              -- Account lockout timestamp
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create index for faster username lookups
+CREATE INDEX IF NOT EXISTS idx_admin_username ON admin_users(username);
+
 INSERT INTO projects (title, description, tech_stack, demo_type, display_order, is_featured)
 VALUES 
     ('Portfolio Website', 'A full-stack portfolio application built on Cloudflare infrastructure', 'Cloudflare Workers, D1, R2, Pages', 'live', 1, 1),

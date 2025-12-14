@@ -27,12 +27,15 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie": "^1.1.1",
+    "jsonwebtoken": "^9.0.3",
     "next": "^15.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "wrangler": "^3.78.0",
-    "@cloudflare/next-on-pages": "^1.13.5"
+    "@cloudflare/next-on-pages": "^1.13.5",
+    "wrangler": "^3.78.0"
   }
 }
