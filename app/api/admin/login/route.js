@@ -23,10 +23,11 @@ export async function POST(request) {
 
     // For local development, use mock data
     // In production with Cloudflare D1, this would query the database
+    // Password: admin123
     const mockUser = {
       id: 1,
       username: 'admin',
-      password_hash: '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYWv.oTtIpm', // 'admin123'
+      password_hash: '$2b$12$LkzAjpkrXS9aBaug.LLeke0.hMlraN9crfzQztbFAy5MkDhelAKJW', // 'admin123'
       email: 'admin@example.com',
       failed_login_attempts: 0,
       locked_until: null,
