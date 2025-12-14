@@ -1,0 +1,34 @@
+# Cloudflare Configuration File
+# This file configures your portfolio deployment
+
+# Basic project information
+name = "portfolio-infrastructure"
+compatibility_date = "2024-01-01"
+
+# Pages configuration (for frontend deployment)
+pages_build_output_dir = "src"
+
+# Uncomment and configure after creating D1 database
+# [[d1_databases]]
+# binding = "DB"                    # Access in code as env.DB
+# database_name = "portfolio-db"
+# database_id = "YOUR_DATABASE_ID"  # Get this after running: wrangler d1 create portfolio-db
+
+# Uncomment and configure after creating R2 bucket
+# [[r2_buckets]]
+# binding = "FILES"                 # Access in code as env.FILES
+# bucket_name = "portfolio-files"
+
+# Environment variables (non-sensitive)
+[vars]
+ENVIRONMENT = "development"
+
+# Build configuration
+[build]
+command = ""
+watch_dirs = ["src"]
+
+# Development server settings
+[dev]
+port = 8788
+local_protocol = "http"
