@@ -1,0 +1,28 @@
+{
+  "name": "portfolio-infrastructure",
+  "version": "1.0.0",
+  "description": "Full-stack professional portfolio on Cloudflare infrastructure",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler pages dev src --compatibility-date=2024-01-01",
+    "deploy": "wrangler pages deploy src",
+    "deploy:worker": "wrangler deploy",
+    "d1:create": "wrangler d1 create portfolio-db",
+    "d1:init": "wrangler d1 execute portfolio-db --file=./schema.sql",
+    "d1:query": "wrangler d1 execute portfolio-db --command",
+    "r2:create": "wrangler r2 bucket create portfolio-files"
+  },
+  "keywords": [
+    "portfolio",
+    "cloudflare",
+    "workers",
+    "d1",
+    "r2",
+    "pages"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.78.0"
+  }
+}
