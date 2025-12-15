@@ -5,6 +5,7 @@ import { use } from 'react';
 import Link from 'next/link';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import { getYouTubeVideoId, isYouTubeUrl, getYouTubeEmbedUrl } from '@/lib/youtube';
 
 export default function ProjectDetailPage({ params }) {
   const resolvedParams = use(params);
@@ -164,8 +165,27 @@ export default function ProjectDetailPage({ params }) {
             </div>
           )}
 
-          {/* Demo Type Badge */}
-          {project.demo_type && project.demo_type !== 'none' && (
+          {/* YouTube Video Embed */}
+          {project.video_url && isYouTubeUrl(project.video_url) && (
+            <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Video Demo</h2>
+              <div className="aspect-video w-full rounded-lg overflow-hidden shadow-md">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={getYouTubeEmbedUrl(getYouTubeVideoId(project.video_url))}
+                  title={project.title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                ></iframe>
+              </div>
+            </div>
+          )}
+
+          {/* Demo Type Badge - Only show if NOT YouTube video */}
+          {project.demo_type && project.demo_type !== 'none' && !isYouTubeUrl(project.video_url) && (
             <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
               <div className="flex items-center">
                 <svg className="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

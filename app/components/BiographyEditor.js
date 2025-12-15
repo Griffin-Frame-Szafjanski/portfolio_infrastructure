@@ -7,6 +7,8 @@ export default function BiographyEditor() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [uploadingResume, setUploadingResume] = useState(false);
 
   const [formData, setFormData] = useState({
     full_name: '',
@@ -90,6 +92,74 @@ export default function BiographyEditor() {
       setMessage({ type: 'error', text: 'An error occurred while updating' });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingPhoto(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload/photo', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setFormData(prev => ({ ...prev, profile_photo_url: data.url }));
+        setMessage({ type: 'success', text: 'Photo uploaded successfully!' });
+      } else {
+        setMessage({ type: 'error', text: data.error || 'Upload failed' });
+      }
+    } catch (error) {
+      console.error('Photo upload error:', error);
+      setMessage({ type: 'error', text: 'Failed to upload photo' });
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  const handleResumeUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingResume(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload/resume', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setFormData(prev => ({ 
+          ...prev, 
+          resume_url: data.url,
+          resume_pdf_url: data.url 
+        }));
+        setMessage({ type: 'success', text: 'Resume uploaded successfully!' });
+      } else {
+        setMessage({ type: 'error', text: data.error || 'Upload failed' });
+      }
+    } catch (error) {
+      console.error('Resume upload error:', error);
+      setMessage({ type: 'error', text: 'Failed to upload resume' });
+    } finally {
+      setUploadingResume(false);
     }
   };
 
@@ -231,45 +301,67 @@ export default function BiographyEditor() {
           <h3>Media & Files</h3>
           
           <div className="form-group">
-            <label htmlFor="profile_photo_url">Profile Photo URL</label>
+            <label>Profile Photo</label>
+            <div className="upload-group">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoUpload}
+                disabled={uploadingPhoto}
+                className="file-input"
+                id="photo-upload"
+              />
+              <label htmlFor="photo-upload" className="file-label">
+                {uploadingPhoto ? 'Uploading...' : 'Choose Photo'}
+              </label>
+              {formData.profile_photo_url && (
+                <div className="preview-container">
+                  <img src={formData.profile_photo_url} alt="Preview" className="preview-image" />
+                </div>
+              )}
+            </div>
+            <small className="form-help">Upload an image (JPEG, PNG, WebP, GIF - max 5MB) or enter URL below</small>
             <input
-              type="url"
-              id="profile_photo_url"
+              type="text"
               name="profile_photo_url"
               value={formData.profile_photo_url}
               onChange={handleChange}
               className="form-input"
-              placeholder="https://example.com/photo.jpg"
+              style={{ marginTop: '8px' }}
+              placeholder="Or paste image URL here"
             />
-            <small className="form-help">Direct link to your profile photo</small>
           </div>
 
           <div className="form-group">
-            <label htmlFor="resume_url">Resume Download URL</label>
+            <label>Resume PDF</label>
+            <div className="upload-group">
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={handleResumeUpload}
+                disabled={uploadingResume}
+                className="file-input"
+                id="resume-upload"
+              />
+              <label htmlFor="resume-upload" className="file-label">
+                {uploadingResume ? 'Uploading...' : 'Choose PDF'}
+              </label>
+              {formData.resume_url && (
+                <a href={formData.resume_url} target="_blank" rel="noopener noreferrer" className="file-link">
+                  View Current Resume
+                </a>
+              )}
+            </div>
+            <small className="form-help">Upload a PDF file (max 10MB) or enter URL below</small>
             <input
-              type="url"
-              id="resume_url"
+              type="text"
               name="resume_url"
               value={formData.resume_url}
               onChange={handleChange}
               className="form-input"
-              placeholder="https://example.com/resume.pdf"
+              style={{ marginTop: '8px' }}
+              placeholder="Or paste PDF URL here"
             />
-            <small className="form-help">Direct link for resume download button</small>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="resume_pdf_url">Resume PDF Viewer URL</label>
-            <input
-              type="url"
-              id="resume_pdf_url"
-              name="resume_pdf_url"
-              value={formData.resume_pdf_url}
-              onChange={handleChange}
-              className="form-input"
-              placeholder="https://example.com/resume.pdf"
-            />
-            <small className="form-help">Direct link to PDF for embedded viewer on biography page</small>
           </div>
         </div>
 
@@ -392,6 +484,59 @@ export default function BiographyEditor() {
         .btn-lg {
           padding: var(--spacing-md) var(--spacing-xl);
           font-size: 1.1rem;
+        }
+
+        .upload-group {
+          display: flex;
+          align-items: center;
+          gap: var(--spacing-md);
+          margin-bottom: var(--spacing-xs);
+        }
+
+        .file-input {
+          display: none;
+        }
+
+        .file-label {
+          display: inline-block;
+          padding: var(--spacing-sm) var(--spacing-lg);
+          background-color: var(--color-primary);
+          color: white;
+          border-radius: var(--radius-md);
+          cursor: pointer;
+          font-size: 0.9rem;
+          transition: var(--transition);
+        }
+
+        .file-label:hover {
+          background-color: var(--color-primary-dark);
+          transform: translateY(-1px);
+        }
+
+        .file-link {
+          padding: var(--spacing-sm) var(--spacing-md);
+          background-color: #f0f0f0;
+          color: var(--color-primary);
+          border-radius: var(--radius-md);
+          text-decoration: none;
+          font-size: 0.9rem;
+          transition: var(--transition);
+        }
+
+        .file-link:hover {
+          background-color: #e0e0e0;
+        }
+
+        .preview-container {
+          margin-top: var(--spacing-md);
+        }
+
+        .preview-image {
+          width: 150px;
+          height: 150px;
+          object-fit: cover;
+          border-radius: var(--radius-md);
+          border: 2px solid #e0e0e0;
         }
 
         @media (max-width: 768px) {
