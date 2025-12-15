@@ -71,15 +71,13 @@ lib/
    JWT_SECRET=your-very-long-random-secret-here
    ```
 
-2. **Create Admin User**
-   ```javascript
-   // Use the hashPassword function
-   import { hashPassword } from './lib/auth';
-   const hash = await hashPassword('your-secure-password');
+2. **Hash Admin Password**
+   ```bash
+   # Use the password hashing utility
+   node scripts/hash-password.js your-secure-password
    
-   // Store in D1 database
-   INSERT INTO admin_users (username, password_hash, email)
-   VALUES ('your_username', 'hash_here', 'your@email.com');
+   # Copy the output hash and add to environment variables:
+   # ADMIN_PASSWORD=$2b$12$...hashed-password...
    ```
 
 3. **Configure Environment Variables**
