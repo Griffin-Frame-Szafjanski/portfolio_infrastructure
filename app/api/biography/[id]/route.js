@@ -28,6 +28,7 @@ export async function PUT(request, { params }) {
       linkedin_url,
       github_url,
       resume_url,
+      resume_pdf_url,
       profile_photo_url
     } = body;
 
@@ -42,6 +43,7 @@ export async function PUT(request, { params }) {
       linkedin_url,
       github_url,
       resume_url,
+      resume_pdf_url,
       profile_photo_url
     });
 
