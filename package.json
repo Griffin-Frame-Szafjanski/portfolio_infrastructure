@@ -4,7 +4,7 @@
   "description": "Full-stack professional portfolio on Cloudflare infrastructure",
   "scripts": {
     "dev": "next dev",
-    "build": "opennextjs-cloudflare",
+    "build": "opennextjs-cloudflare build",
     "start": "next start",
     "preview": "wrangler pages dev .worker-next --compatibility-date=2024-01-01",
     "deploy": "npm run build && wrangler pages deploy .worker-next",
