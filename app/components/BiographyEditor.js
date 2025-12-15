@@ -201,7 +201,7 @@ export default function BiographyEditor() {
           <div className="form-group">
             <label htmlFor="linkedin_url">LinkedIn URL</label>
             <input
-              type="url"
+              type="text"
               id="linkedin_url"
               name="linkedin_url"
               value={formData.linkedin_url}
@@ -209,12 +209,13 @@ export default function BiographyEditor() {
               className="form-input"
               placeholder="https://linkedin.com/in/yourprofile"
             />
+            <small className="form-help">Enter your full LinkedIn profile URL</small>
           </div>
 
           <div className="form-group">
             <label htmlFor="github_url">GitHub URL</label>
             <input
-              type="url"
+              type="text"
               id="github_url"
               name="github_url"
               value={formData.github_url}
@@ -222,6 +223,7 @@ export default function BiographyEditor() {
               className="form-input"
               placeholder="https://github.com/yourusername"
             />
+            <small className="form-help">Enter your full GitHub profile URL</small>
           </div>
         </div>
 
