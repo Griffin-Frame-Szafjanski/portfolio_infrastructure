@@ -33,10 +33,13 @@ All 187 files and commit history have been successfully pushed!
    Production branch: main
    
    Build settings:
-   - Framework preset: Next.js (Static Export)
+   - Framework preset: Next.js
    - Build command: npm run build
    - Build output directory: .next
-   - Root directory: / (leave empty)
+   - Root directory: (leave empty)
+   
+   IMPORTANT: Leave "Deploy command" EMPTY or delete it
+   Cloudflare Pages handles deployment automatically after build
    ```
 
 5. **Add Environment Variables** (Important!)
