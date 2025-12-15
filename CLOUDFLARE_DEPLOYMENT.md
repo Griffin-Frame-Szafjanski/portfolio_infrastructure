@@ -37,9 +37,10 @@ All 187 files and commit history have been successfully pushed!
    - Build command: npm run build
    - Build output directory: .next
    - Root directory: (leave empty)
+   - Deploy command: echo "Deployment handled by Cloudflare Pages"
    
-   IMPORTANT: Leave "Deploy command" EMPTY or delete it
-   Cloudflare Pages handles deployment automatically after build
+   Note: The deploy command is just a placeholder
+   Cloudflare Pages handles the actual deployment after build
    ```
 
 5. **Add Environment Variables** (Important!)
