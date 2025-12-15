@@ -37,10 +37,10 @@ All 187 files and commit history have been successfully pushed!
    - Build command: npm run build:worker
    - Build output directory: .worker-next
    - Root directory: (leave empty)
-   - Deploy command: exit 0
    
-   Note: Using OpenNext adapter (@opennextjs/cloudflare)
-   build:worker runs Next.js build first, then converts to Cloudflare Workers.
+   Note: There is NO "Deploy command" field for Git integration!
+   Cloudflare Pages automatically deploys after successful build.
+   Using OpenNext adapter (@opennextjs/cloudflare)
    ✅ 0 vulnerabilities | ✅ Latest Wrangler v4 | ✅ No recursion!
    ```
 
