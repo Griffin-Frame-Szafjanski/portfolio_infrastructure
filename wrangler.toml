@@ -1,12 +1,10 @@
-# Cloudflare Configuration File
-# This file configures your portfolio deployment
+# Cloudflare Workers Configuration
+# This file configures your portfolio deployment as a Worker
 
 # Basic project information
 name = "portfolio-infrastructure"
+main = ".open-next/worker.js"
 compatibility_date = "2024-01-01"
-
-# Pages configuration (for Next.js deployment with OpenNext)
-pages_build_output_dir = ".open-next"
 
 # Uncomment and configure after creating D1 database
 # [[d1_databases]]
@@ -21,7 +19,7 @@ pages_build_output_dir = ".open-next"
 
 # Environment variables (non-sensitive)
 [vars]
-ENVIRONMENT = "development"
+ENVIRONMENT = "production"
 
 # Development server settings
 [dev]
