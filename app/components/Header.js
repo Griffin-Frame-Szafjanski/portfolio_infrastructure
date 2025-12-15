@@ -1,12 +1,13 @@
 'use client'
 
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
 export default function Header() {
-  const scrollToSection = (e, targetId) => {
-    e.preventDefault();
-    const element = document.querySelector(targetId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+  const pathname = usePathname();
+  
+  const isActive = (path) => {
+    return pathname === path;
   };
 
   return (
@@ -14,35 +15,58 @@ export default function Header() {
       <nav className="py-4">
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-primary">Portfolio</h1>
+            <Link href="/" className="text-2xl font-bold text-primary hover:text-primary/80 transition-colors">
+              Portfolio
+            </Link>
           </div>
           <ul className="flex list-none gap-8">
             <li>
-              <a 
-                href="#about" 
-                className="font-medium text-gray-900 px-4 py-2 rounded-lg transition-colors hover:bg-gray-100 hover:text-primary" 
-                onClick={(e) => scrollToSection(e, '#about')}
+              <Link 
+                href="/" 
+                className={`font-medium px-4 py-2 rounded-lg transition-colors ${
+                  isActive('/') 
+                    ? 'bg-primary text-white' 
+                    : 'text-gray-900 hover:bg-gray-100 hover:text-primary'
+                }`}
               >
-                About
-              </a>
+                Home
+              </Link>
             </li>
             <li>
-              <a 
-                href="#projects" 
-                className="font-medium text-gray-900 px-4 py-2 rounded-lg transition-colors hover:bg-gray-100 hover:text-primary" 
-                onClick={(e) => scrollToSection(e, '#projects')}
+              <Link 
+                href="/biography" 
+                className={`font-medium px-4 py-2 rounded-lg transition-colors ${
+                  isActive('/biography') 
+                    ? 'bg-primary text-white' 
+                    : 'text-gray-900 hover:bg-gray-100 hover:text-primary'
+                }`}
+              >
+                Biography
+              </Link>
+            </li>
+            <li>
+              <Link 
+                href="/projects" 
+                className={`font-medium px-4 py-2 rounded-lg transition-colors ${
+                  pathname?.startsWith('/projects') 
+                    ? 'bg-primary text-white' 
+                    : 'text-gray-900 hover:bg-gray-100 hover:text-primary'
+                }`}
               >
                 Projects
-              </a>
+              </Link>
             </li>
             <li>
-              <a 
-                href="#contact" 
-                className="font-medium text-gray-900 px-4 py-2 rounded-lg transition-colors hover:bg-gray-100 hover:text-primary" 
-                onClick={(e) => scrollToSection(e, '#contact')}
+              <Link 
+                href="/contact" 
+                className={`font-medium px-4 py-2 rounded-lg transition-colors ${
+                  isActive('/contact') 
+                    ? 'bg-primary text-white' 
+                    : 'text-gray-900 hover:bg-gray-100 hover:text-primary'
+                }`}
               >
                 Contact
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
