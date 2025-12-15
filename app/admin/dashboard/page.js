@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import BiographyEditor from '@/app/components/BiographyEditor';
+import ProjectsManager from '@/app/components/ProjectsManager';
 
 export default function AdminDashboard() {
   const [user, setUser] = useState(null);
@@ -142,10 +144,7 @@ export default function AdminDashboard() {
             <div className="admin-section">
               <h2>Biography Management</h2>
               <p>Edit your professional biography and contact information.</p>
-              <div className="admin-placeholder">
-                <p>Biography editing interface will be added here.</p>
-                <p>Features: Edit name, title, bio, contact info, social links</p>
-              </div>
+              <BiographyEditor />
             </div>
           )}
 
@@ -153,10 +152,7 @@ export default function AdminDashboard() {
             <div className="admin-section">
               <h2>Projects Management</h2>
               <p>Add, edit, or remove portfolio projects.</p>
-              <div className="admin-placeholder">
-                <p>Projects management interface will be added here.</p>
-                <p>Features: Add new projects, edit existing ones, reorder, delete</p>
-              </div>
+              <ProjectsManager />
             </div>
           )}
         </main>

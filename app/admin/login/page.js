@@ -43,22 +43,22 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="admin-login-container">
-      <div className="admin-login-box">
-        <div className="admin-login-header">
-          <h1>Admin Login</h1>
-          <p>Sign in to manage your portfolio</p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-secondary p-6">
+      <div className="bg-white rounded-2xl shadow-2xl p-12 max-w-md w-full">
+        <div className="text-center mb-12">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Login</h1>
+          <p className="text-gray-600">Sign in to manage your portfolio</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="admin-login-form">
+        <form onSubmit={handleSubmit} className="mb-8">
           {error && (
-            <div className="admin-error-message">
+            <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6 border border-red-200">
               {error}
             </div>
           )}
 
-          <div className="form-group">
-            <label htmlFor="username">Username</label>
+          <div className="mb-6">
+            <label htmlFor="username" className="block mb-2 font-medium text-gray-900">Username</label>
             <input
               type="text"
               id="username"
@@ -67,11 +67,12 @@ export default function AdminLogin() {
               required
               autoComplete="username"
               disabled={loading}
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg text-base transition-colors focus:outline-none focus:border-primary disabled:bg-gray-100 disabled:cursor-not-allowed"
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
+          <div className="mb-6">
+            <label htmlFor="password" className="block mb-2 font-medium text-gray-900">Password</label>
             <input
               type="password"
               id="password"
@@ -80,113 +81,23 @@ export default function AdminLogin() {
               required
               autoComplete="current-password"
               disabled={loading}
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg text-base transition-colors focus:outline-none focus:border-primary disabled:bg-gray-100 disabled:cursor-not-allowed"
             />
           </div>
 
-          <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
+          <button 
+            type="submit" 
+            className="w-full btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed" 
+            disabled={loading}
+          >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 
-        <div className="admin-login-footer">
-          <p>Default credentials: admin / admin123</p>
+        <div className="text-center pt-6 border-t border-gray-200">
+          <p className="text-gray-500 text-sm">Default credentials: admin / admin123</p>
         </div>
       </div>
-
-      <style jsx>{`
-        .admin-login-container {
-          min-height: 100vh;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          padding: var(--spacing-md);
-        }
-
-        .admin-login-box {
-          background: white;
-          border-radius: var(--radius-xl);
-          box-shadow: var(--shadow-xl);
-          padding: var(--spacing-2xl);
-          max-width: 400px;
-          width: 100%;
-        }
-
-        .admin-login-header {
-          text-align: center;
-          margin-bottom: var(--spacing-xl);
-        }
-
-        .admin-login-header h1 {
-          font-size: 2rem;
-          font-weight: 700;
-          color: var(--color-text);
-          margin-bottom: var(--spacing-xs);
-        }
-
-        .admin-login-header p {
-          color: var(--color-text-light);
-          font-size: 0.95rem;
-        }
-
-        .admin-login-form {
-          margin-bottom: var(--spacing-lg);
-        }
-
-        .form-group {
-          margin-bottom: var(--spacing-md);
-        }
-
-        .form-group label {
-          display: block;
-          margin-bottom: var(--spacing-xs);
-          font-weight: 500;
-          color: var(--color-text);
-        }
-
-        .form-group input {
-          width: 100%;
-          padding: var(--spacing-sm) var(--spacing-md);
-          border: 2px solid var(--color-border);
-          border-radius: var(--radius-md);
-          font-size: 1rem;
-          transition: var(--transition);
-        }
-
-        .form-group input:focus {
-          outline: none;
-          border-color: var(--color-primary);
-        }
-
-        .form-group input:disabled {
-          background-color: var(--color-bg-alt);
-          cursor: not-allowed;
-        }
-
-        .admin-error-message {
-          background-color: #fee;
-          color: #c33;
-          padding: var(--spacing-sm) var(--spacing-md);
-          border-radius: var(--radius-md);
-          margin-bottom: var(--spacing-md);
-          border: 1px solid #fcc;
-        }
-
-        .btn-block {
-          width: 100%;
-        }
-
-        .admin-login-footer {
-          text-align: center;
-          padding-top: var(--spacing-md);
-          border-top: 1px solid var(--color-border);
-        }
-
-        .admin-login-footer p {
-          color: var(--color-text-light);
-          font-size: 0.85rem;
-        }
-      `}</style>
     </div>
   );
 }
