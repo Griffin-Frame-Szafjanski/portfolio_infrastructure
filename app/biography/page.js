@@ -9,6 +9,15 @@ export default function BiographyPage() {
   const [bio, setBio] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Helper function to ensure URLs have proper protocol
+  const ensureProtocol = (url) => {
+    if (!url) return url;
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    return `https://${url}`;
+  };
+
   useEffect(() => {
     async function loadBiography() {
       try {
@@ -54,7 +63,7 @@ export default function BiographyPage() {
               {/* Profile Photo */}
               <div className="flex flex-col items-center">
                 <img
-                  src={bio?.photo_file_key || '/assets/placeholder-avatar.svg'}
+                  src={bio?.profile_photo_url || bio?.photo_file_key || '/assets/placeholder-avatar.svg'}
                   alt={bio?.full_name || 'Profile'}
                   className="w-64 h-64 rounded-full object-cover border-4 border-primary/20 shadow-lg mb-4"
                 />
@@ -94,7 +103,7 @@ export default function BiographyPage() {
                 <div className="flex gap-3 mt-6">
                   {bio?.linkedin_url && (
                     <a 
-                      href={bio.linkedin_url} 
+                      href={ensureProtocol(bio.linkedin_url)} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="p-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
@@ -107,7 +116,7 @@ export default function BiographyPage() {
                   )}
                   {bio?.github_url && (
                     <a 
-                      href={bio.github_url} 
+                      href={ensureProtocol(bio.github_url)} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="p-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors"
