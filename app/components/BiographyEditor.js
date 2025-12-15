@@ -18,6 +18,7 @@ export default function BiographyEditor() {
     linkedin_url: '',
     github_url: '',
     resume_url: '',
+    resume_pdf_url: '',
     profile_photo_url: ''
   });
 
@@ -42,6 +43,7 @@ export default function BiographyEditor() {
           linkedin_url: data.data.linkedin_url || '',
           github_url: data.data.github_url || '',
           resume_url: data.data.resume_url || '',
+          resume_pdf_url: data.data.resume_pdf_url || '',
           profile_photo_url: data.data.profile_photo_url || ''
         });
       }
@@ -241,7 +243,7 @@ export default function BiographyEditor() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="resume_url">Resume URL</label>
+            <label htmlFor="resume_url">Resume Download URL</label>
             <input
               type="url"
               id="resume_url"
@@ -251,7 +253,21 @@ export default function BiographyEditor() {
               className="form-input"
               placeholder="https://example.com/resume.pdf"
             />
-            <small className="form-help">Direct link to your resume PDF</small>
+            <small className="form-help">Direct link for resume download button</small>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="resume_pdf_url">Resume PDF Viewer URL</label>
+            <input
+              type="url"
+              id="resume_pdf_url"
+              name="resume_pdf_url"
+              value={formData.resume_pdf_url}
+              onChange={handleChange}
+              className="form-input"
+              placeholder="https://example.com/resume.pdf"
+            />
+            <small className="form-help">Direct link to PDF for embedded viewer on biography page</small>
           </div>
         </div>
 
