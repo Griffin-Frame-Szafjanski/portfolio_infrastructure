@@ -34,12 +34,12 @@ All 187 files and commit history have been successfully pushed!
    
    Build settings:
    - Framework preset: Next.js
-   - Build command: npx @cloudflare/next-on-pages@1
-   - Build output directory: .vercel/output/static
+   - Build command: npm run build
+   - Build output directory: .next
    - Root directory: (leave empty)
    
-   Note: We use @cloudflare/next-on-pages to make Next.js compatible with Cloudflare Pages.
-   This handles API routes and server-side features properly.
+   Note: Cloudflare Pages now supports Next.js natively!
+   No adapters or deprecated packages needed.
    ```
 
 5. **Add Environment Variables** (Important!)
