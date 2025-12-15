@@ -1,13 +1,8 @@
 import { NextResponse } from 'next/server';
-import {
-  verifyPassword,
-  generateToken,
-  setAuthCookie,
-  isAccountLocked,
-  calculateLockoutTime,
-  maxAttemptsReached,
-  sanitizeUser,
-} from '@/lib/auth';
+import { hashPassword } from '@/lib/auth';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { cookies } from 'next/headers';
 
 export async function POST(request) {
   try {
@@ -21,97 +16,66 @@ export async function POST(request) {
       );
     }
 
-    // For local development, use mock data
-    // In production with Cloudflare D1, this would query the database
-    // Password: admin123
-    const mockUser = {
-      id: 1,
-      username: 'admin',
-      password_hash: '$2b$12$LkzAjpkrXS9aBaug.LLeke0.hMlraN9crfzQztbFAy5MkDhelAKJW', // 'admin123'
-      email: 'admin@example.com',
-      failed_login_attempts: 0,
-      locked_until: null,
-    };
+    // Get admin credentials from environment variables
+    const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
+    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
-    // In production, query the database:
-    // const user = await db.prepare('SELECT * FROM admin_users WHERE username = ?').bind(username).first();
+    if (!ADMIN_USERNAME || !ADMIN_PASSWORD) {
+      console.error('Admin credentials not configured in environment variables');
+      return NextResponse.json(
+        { success: false, error: 'Server configuration error' },
+        { status: 500 }
+      );
+    }
 
-    const user = username === 'admin' ? mockUser : null;
-
-    if (!user) {
+    // Check username
+    if (username !== ADMIN_USERNAME) {
       return NextResponse.json(
         { success: false, error: 'Invalid credentials' },
         { status: 401 }
       );
     }
 
-    // Check if account is locked
-    if (isAccountLocked(user)) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Account is temporarily locked due to too many failed attempts. Please try again later.',
-        },
-        { status: 403 }
-      );
-    }
-
     // Verify password
-    const isValid = await verifyPassword(password, user.password_hash);
+    const isValid = await bcrypt.compare(password, ADMIN_PASSWORD);
 
     if (!isValid) {
-      // Increment failed attempts
-      const newAttempts = user.failed_login_attempts + 1;
-      
-      // In production, update database:
-      // await db.prepare('UPDATE admin_users SET failed_login_attempts = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
-      //   .bind(newAttempts, user.id).run();
-
-      // Lock account if max attempts reached
-      if (maxAttemptsReached(newAttempts)) {
-        const lockoutTime = calculateLockoutTime();
-        // In production:
-        // await db.prepare('UPDATE admin_users SET locked_until = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
-        //   .bind(lockoutTime.toISOString(), user.id).run();
-
-        return NextResponse.json(
-          {
-            success: false,
-            error: 'Too many failed login attempts. Account has been locked for 15 minutes.',
-          },
-          { status: 403 }
-        );
-      }
-
       return NextResponse.json(
-        {
-          success: false,
-          error: 'Invalid credentials',
-          attemptsRemaining: 5 - newAttempts,
-        },
+        { success: false, error: 'Invalid credentials' },
         { status: 401 }
       );
     }
 
-    // Successful login - reset failed attempts and update last login
-    // In production:
-    // await db.prepare('UPDATE admin_users SET failed_login_attempts = 0, locked_until = NULL, last_login = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
-    //   .bind(user.id).run();
-
     // Generate JWT token
-    const token = generateToken({
-      id: user.id,
-      username: user.username,
-      email: user.email,
-    });
+    const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+    const token = jwt.sign(
+      {
+        id: 1,
+        username: ADMIN_USERNAME,
+        email: 'admin@example.com',
+      },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
 
     // Set secure HttpOnly cookie
-    await setAuthCookie(token);
+    const cookieStore = await cookies();
+    cookieStore.set('admin_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24, // 24 hours
+      path: '/',
+    });
 
-    // Return sanitized user data
+    // Return success
     return NextResponse.json({
       success: true,
-      user: sanitizeUser(user),
+      user: {
+        id: 1,
+        username: ADMIN_USERNAME,
+        email: 'admin@example.com',
+      },
       message: 'Login successful',
     });
   } catch (error) {
