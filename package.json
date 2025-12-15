@@ -1,28 +1,19 @@
 {
   "name": "portfolio-infrastructure",
   "version": "1.0.0",
-  "description": "Full-stack professional portfolio on Cloudflare infrastructure",
+  "description": "Full-stack professional portfolio built with Next.js, deployed on Vercel with Neon Postgres",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:worker": "opennextjs-cloudflare build",
-    "start": "next start",
-    "preview": "wrangler dev",
-    "deploy": "npm run build:worker && wrangler deploy",
-    "d1:create": "wrangler d1 create portfolio-db",
-    "d1:init": "wrangler d1 execute portfolio-db --file=./schema.sql",
-    "d1:query": "wrangler d1 execute portfolio-db --command",
-    "r2:create": "wrangler r2 bucket create portfolio-files"
+    "start": "next start"
   },
   "keywords": [
     "portfolio",
-    "cloudflare",
-    "workers",
-    "d1",
-    "r2",
-    "pages",
     "nextjs",
-    "react"
+    "react",
+    "vercel",
+    "neon",
+    "postgres"
   ],
   "author": "",
   "license": "MIT",
@@ -39,10 +30,8 @@
     "react-pdf": "^10.2.0"
   },
   "devDependencies": {
-    "@opennextjs/cloudflare": "^1.14.6",
     "autoprefixer": "^10.4.22",
     "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.19",
-    "wrangler": "^4.54.0"
+    "tailwindcss": "^3.4.19"
   }
 }
