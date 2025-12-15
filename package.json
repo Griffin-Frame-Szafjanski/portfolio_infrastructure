@@ -4,11 +4,10 @@
   "description": "Full-stack professional portfolio on Cloudflare infrastructure",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "opennextjs-cloudflare",
     "start": "next start",
-    "pages:dev": "wrangler pages dev .next --compatibility-date=2024-01-01",
-    "pages:build": "next build",
-    "pages:deploy": "npm run pages:build && wrangler pages deploy .next",
+    "preview": "wrangler pages dev .worker-next --compatibility-date=2024-01-01",
+    "deploy": "npm run build && wrangler pages deploy .worker-next",
     "d1:create": "wrangler d1 create portfolio-db",
     "d1:init": "wrangler d1 execute portfolio-db --file=./schema.sql",
     "d1:query": "wrangler d1 execute portfolio-db --command",
@@ -37,9 +36,10 @@
     "react-pdf": "^10.2.0"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.14.6",
     "autoprefixer": "^10.4.22",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.19",
-    "wrangler": "^3.78.0"
+    "wrangler": "^4.54.0"
   }
 }

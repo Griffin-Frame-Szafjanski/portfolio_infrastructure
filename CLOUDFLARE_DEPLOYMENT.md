@@ -33,13 +33,15 @@ All 187 files and commit history have been successfully pushed!
    Production branch: main
    
    Build settings:
-   - Framework preset: Next.js
+   - Framework preset: None
    - Build command: npm run build
-   - Build output directory: .next
+   - Build output directory: .worker-next
    - Root directory: (leave empty)
+   - Deploy command: exit 0
    
-   Note: Cloudflare Pages now supports Next.js natively!
-   No adapters or deprecated packages needed.
+   Note: Using OpenNext adapter (@opennextjs/cloudflare)
+   This converts Next.js + API routes to work on Cloudflare Pages.
+   ✅ 0 vulnerabilities | ✅ Latest Wrangler v4
    ```
 
 5. **Add Environment Variables** (Important!)
