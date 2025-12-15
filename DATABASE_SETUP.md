@@ -1,6 +1,6 @@
-# 🗄️ Database Setup Guide - Vercel Postgres
+# 🗄️ Database Setup Guide - Neon Postgres
 
-Complete guide to set up environment variables and replace mock data with Vercel Postgres.
+Complete guide to set up environment variables and replace mock data with Neon Postgres.
 
 ---
 
@@ -38,41 +38,53 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 ---
 
-## 🗄️ **Step 2: Create Vercel Postgres Database**
+## 🗄️ **Step 2: Create Neon Postgres Database**
 
-### In Vercel Dashboard:
+### Create Neon Account:
 
-1. Still in your project, click **"Storage"** tab
-2. Click **"Create Database"**
-3. Select **"Postgres"**
-4. Choose a database name: `portfolio-db`
-5. Select region: **Choose closest to you**
-6. Click **"Create"**
+1. Go to https://neon.tech
+2. Click **"Sign Up"** (free, no credit card required)
+3. Sign in with GitHub (recommended) or email
 
-### Connect to Your Project:
+### Create Your Database:
 
-1. Vercel will show connection options
-2. Click **"Connect"** for your project
-3. **Vercel automatically adds these environment variables:**
-   - `POSTGRES_URL`
-   - `POSTGRES_PRISMA_URL`
-   - `POSTGRES_URL_NON_POOLING`
-   - `POSTGRES_USER`
-   - `POSTGRES_HOST`
-   - `POSTGRES_PASSWORD`
-   - `POSTGRES_DATABASE`
+1. Click **"Create a project"**
+2. **Project name:** `portfolio-db`
+3. **Region:** Choose closest to you (e.g., AWS US East for USA)
+4. **Postgres version:** Leave default (latest)
+5. Click **"Create project"**
 
-✅ **You're done with Vercel setup!** Environment variables are configured.
+### Get Your Connection String:
+
+1. After creation, you'll see the **Connection Details**
+2. Click **"Connection string"** tab
+3. Copy the `DATABASE_URL` (it looks like):
+   ```
+   postgresql://username:password@host.neon.tech/database?sslmode=require
+   ```
+
+### Add to Vercel:
+
+1. Go back to Vercel Dashboard → Your Project → Settings → Environment Variables
+2. Add new variable:
+   ```
+   Name: DATABASE_URL
+   Value: <paste your Neon connection string>
+   ```
+3. Check **Production**, **Preview**, and **Development**
+4. Click **"Save"**
+
+✅ **Database connected!** Your connection string is now available to your app.
 
 ---
 
 ## 📊 **Step 3: Initialize Database Schema**
 
-### Access Vercel Postgres:
+### Access Neon SQL Editor:
 
-1. In Vercel Dashboard → **Storage** → **portfolio-db**
-2. Click **"Query"** tab (or use `.sql` tab)
-3. Run this SQL to create your tables:
+1. In Neon Dashboard → Your **portfolio-db** project
+2. Click **"SQL Editor"** tab (left sidebar)
+3. Copy and paste this SQL to create your tables:
 
 ```sql
 -- Biography table
@@ -186,8 +198,8 @@ ON CONFLICT DO NOTHING;
 ```bash
 cd /Users/griffinframe-szafjanski/Projects/portfolio_infrastructure
 
-# Install Vercel Postgres SDK
-npm install @vercel/postgres
+# Install Neon serverless driver (optimized for serverless)
+npm install @neondatabase/serverless
 ```
 
 ---
@@ -209,10 +221,10 @@ After setup:
 
 1. **Check Environment Variables:**
    - Vercel Dashboard → Settings → Environment Variables
-   - Should see `JWT_SECRET`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and all `POSTGRES_*` variables
+   - Should see `JWT_SECRET`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `DATABASE_URL`
 
 2. **Check Database:**
-   - Vercel Dashboard → Storage → portfolio-db → Query
+   - Neon Dashboard → SQL Editor
    - Run: `SELECT * FROM biography;`
    - Should see your default data
 
