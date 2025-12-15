@@ -82,18 +82,18 @@ lib/
    VALUES ('your_username', 'hash_here', 'your@email.com');
    ```
 
-3. **Update Mock Data**
-   - Remove mock user from `app/api/admin/login/route.js`
-   - Uncomment database queries
-   - Configure D1 binding in wrangler.toml
+3. **Configure Environment Variables**
+   - Set `ADMIN_USERNAME` in Vercel environment variables
+   - Set `ADMIN_PASSWORD` (bcrypt hash) in Vercel environment variables
+   - Use `node scripts/hash-password.js` to generate password hash
 
 4. **Enable HTTPS**
-   - Cloudflare Pages automatically provides HTTPS
+   - Vercel automatically provides HTTPS
    - Cookies will be secure in production
 
-5. **Rate Limiting**
-   - Configure Cloudflare Rate Limiting rules
-   - Limit `/api/admin/login` to 5 requests per minute
+5. **Rate Limiting (Optional)**
+   - Consider using Vercel's rate limiting features
+   - Or implement middleware to limit `/api/admin/login` requests
 
 ## API Endpoints
 
@@ -159,14 +159,14 @@ Check authentication status
 ## Development vs Production
 
 ### Local Development
-- Uses mock user data
+- Uses environment variables for admin credentials
 - JWT secret from environment or default
-- Works without D1 database
+- Connects to Neon database via DATABASE_URL
 
-### Production (Cloudflare Pages)
-- Connects to D1 database
+### Production (Vercel)
+- Connects to Neon Postgres database
 - Requires JWT_SECRET environment variable
-- Uses Cloudflare's edge security
+- Uses environment variables for admin authentication
 - HttpOnly cookies with secure flag
 
 ## Troubleshooting
@@ -183,9 +183,9 @@ Check authentication status
 - Tokens are automatically refreshed
 
 ### Database Connection Issues
-- Verify D1 binding in wrangler.toml
-- Check database has admin_users table
-- Ensure admin user exists in database
+- Verify `DATABASE_URL` environment variable is set
+- Check Neon database connection in Vercel logs
+- Ensure database tables are created (see DATABASE_SETUP.md)
 
 ## Future Enhancements
 
@@ -237,22 +237,21 @@ export default function AdminPage() {
 
 Before going to production:
 
-- [ ] Change default admin credentials
+- [ ] Set secure admin credentials in environment variables
 - [ ] Set strong JWT_SECRET environment variable
-- [ ] Enable Cloudflare Rate Limiting
-- [ ] Configure D1 database binding
-- [ ] Test account lockout functionality
-- [ ] Verify HTTPS is enabled
-- [ ] Review access logs
-- [ ] Set up monitoring/alerting
+- [ ] Hash password using scripts/hash-password.js
+- [ ] Verify DATABASE_URL is configured in Vercel
+- [ ] Verify HTTPS is enabled (automatic on Vercel)
+- [ ] Review Vercel deployment logs
+- [ ] Set up monitoring/alerting in Vercel
 - [ ] Document admin procedures
-- [ ] Train authorized users
+- [ ] Test authentication flow
 
 ## Support
 
 For issues or questions:
-- Check DEPLOYMENT_GUIDE.md for setup instructions
-- Review error logs in Cloudflare dashboard
+- Check VERCEL_DEPLOYMENT.md for setup instructions
+- Review error logs in Vercel dashboard
 - Test authentication flow in local development first
 
 ## License

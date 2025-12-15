@@ -233,20 +233,6 @@ Perfect for portfolios! 🎉
 
 ---
 
-## 🔄 **Migrating from Cloudflare Workers**
-
-Good news - you already did the hard part! The changes made:
-- ✅ Simplified `next.config.js`
-- ✅ Removed `open-next.config.ts`
-- ✅ Your code works as-is
-
-Old Cloudflare files (keeping for reference):
-- `wrangler.toml` - Not used by Vercel
-- `WORKERS_DEPLOYMENT.md` - Historical reference
-- `CLOUDFLARE_*.md` - Cloudflare-specific docs
-
----
-
 ## 🎉 **Ready to Deploy!**
 
 Choose your method:

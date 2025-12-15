@@ -191,14 +191,19 @@ ON CONFLICT DO NOTHING;
 
 ---
 
-## 💻 **Step 4: Install Database Package**
+## 💻 **Step 4: Verify Database Package**
 
-### In Your Local Project:
+The Neon serverless driver is already installed in this project:
 
 ```bash
-cd /Users/griffinframe-szafjanski/Projects/portfolio_infrastructure
+# Verify installation
+npm list @neondatabase/serverless
+# Should show: @neondatabase/serverless@1.0.2 (or similar)
+```
 
-# Install Neon serverless driver (optimized for serverless)
+If for some reason it's missing, install it:
+
+```bash
 npm install @neondatabase/serverless
 ```
 
