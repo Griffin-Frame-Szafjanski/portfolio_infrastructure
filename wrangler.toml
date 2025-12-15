@@ -26,7 +26,6 @@ ENVIRONMENT = "development"
 # Build configuration
 [build]
 command = ""
-watch_dirs = ["app"]
 
 # Development server settings
 [dev]

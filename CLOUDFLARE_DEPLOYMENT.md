@@ -34,14 +34,14 @@ All 187 files and commit history have been successfully pushed!
    
    Build settings:
    - Framework preset: None
-   - Build command: npm run build
+   - Build command: npm run build:worker
    - Build output directory: .worker-next
    - Root directory: (leave empty)
    - Deploy command: exit 0
    
    Note: Using OpenNext adapter (@opennextjs/cloudflare)
-   This converts Next.js + API routes to work on Cloudflare Pages.
-   ✅ 0 vulnerabilities | ✅ Latest Wrangler v4
+   build:worker runs Next.js build first, then converts to Cloudflare Workers.
+   ✅ 0 vulnerabilities | ✅ Latest Wrangler v4 | ✅ No recursion!
    ```
 
 5. **Add Environment Variables** (Important!)
