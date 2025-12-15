@@ -2,7 +2,7 @@
 # This file configures your portfolio deployment as a Worker
 
 # Basic project information
-name = "portfolio-infrastructure"
+name = "portfolio-webpage"
 main = ".open-next/worker.js"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
