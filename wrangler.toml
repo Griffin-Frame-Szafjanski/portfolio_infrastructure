@@ -6,7 +6,7 @@ name = "portfolio-infrastructure"
 compatibility_date = "2024-01-01"
 
 # Pages configuration (for Next.js deployment with OpenNext)
-pages_build_output_dir = ".worker-next"
+pages_build_output_dir = ".open-next"
 
 # Uncomment and configure after creating D1 database
 # [[d1_databases]]
