@@ -23,10 +23,6 @@ pages_build_output_dir = ".next"
 [vars]
 ENVIRONMENT = "development"
 
-# Build configuration
-[build]
-command = ""
-
 # Development server settings
 [dev]
 port = 8788
