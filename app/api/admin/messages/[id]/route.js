@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/auth';
-import { updateMessage, deleteMessage } from '@/lib/mockDb';
+import { updateMessage, deleteMessage } from '@/lib/db';
 
 // PUT - Update message (mark as read/unread)
 export async function PUT(request, { params }) {
@@ -19,7 +19,7 @@ export async function PUT(request, { params }) {
     const body = await request.json();
     const { read } = body;
 
-    const updatedMessage = updateMessage(id, { read });
+    const updatedMessage = await updateMessage(id, { read });
 
     if (!updatedMessage) {
       return NextResponse.json(
@@ -57,7 +57,7 @@ export async function DELETE(request, { params }) {
       );
     }
 
-    const deleted = deleteMessage(id);
+    const deleted = await deleteMessage(id);
 
     if (!deleted) {
       return NextResponse.json(

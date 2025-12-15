@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/auth';
-import { getProjects, createProject } from '@/lib/mockDb';
+import { getProjects, createProject } from '@/lib/db';
 
 export async function GET() {
   try {
-    // Get projects from mock database (persists during dev server session)
-    const projects = getProjects();
+    // Get projects from database
+    const projects = await getProjects();
     
     return NextResponse.json({
       success: true,
@@ -57,8 +57,8 @@ export async function POST(request) {
       );
     }
 
-    // Create project in mock database
-    const newProject = createProject({
+    // Create project in database
+    const newProject = await createProject({
       title,
       description,
       long_description: long_description || null,

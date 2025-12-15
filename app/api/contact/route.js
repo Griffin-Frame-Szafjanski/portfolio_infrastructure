@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createMessage } from '@/lib/mockDb';
+import { createMessage } from '@/lib/db';
 
 // POST - Submit contact form
 export async function POST(request) {
@@ -25,7 +25,7 @@ export async function POST(request) {
     }
 
     // Create message in database
-    const newMessage = createMessage({
+    const newMessage = await createMessage({
       name,
       email,
       subject,

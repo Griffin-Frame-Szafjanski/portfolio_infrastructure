@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/auth';
-import { updateProject, deleteProject } from '@/lib/mockDb';
+import { updateProject, deleteProject } from '@/lib/db';
 
 // PUT - Update a project
 export async function PUT(request, { params }) {
@@ -31,8 +31,8 @@ export async function PUT(request, { params }) {
       featured
     } = body;
 
-    // Update project in mock database
-    const updatedProject = updateProject(id, {
+    // Update project in database
+    const updatedProject = await updateProject(id, {
       title,
       description,
       long_description,
@@ -83,8 +83,8 @@ export async function DELETE(request, { params }) {
       );
     }
 
-    // Delete project from mock database
-    const deleted = deleteProject(id);
+    // Delete project from database
+    const deleted = await deleteProject(id);
 
     if (!deleted) {
       return NextResponse.json(

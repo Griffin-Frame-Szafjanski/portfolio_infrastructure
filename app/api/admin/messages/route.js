@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/auth';
-import { getMessages, getUnreadMessageCount } from '@/lib/mockDb';
+import { getMessages, getUnreadMessageCount } from '@/lib/db';
 
 // GET - Get all messages (admin only)
 export async function GET(request) {
@@ -14,8 +14,8 @@ export async function GET(request) {
       );
     }
 
-    const messages = getMessages();
-    const unreadCount = getUnreadMessageCount();
+    const messages = await getMessages();
+    const unreadCount = await getUnreadMessageCount();
 
     return NextResponse.json({
       success: true,

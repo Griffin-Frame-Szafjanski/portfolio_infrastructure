@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/auth';
-import { updateBiography } from '@/lib/mockDb';
+import { updateBiography } from '@/lib/db';
 
 // PUT - Update biography
 export async function PUT(request, { params }) {
@@ -32,8 +32,8 @@ export async function PUT(request, { params }) {
       profile_photo_url
     } = body;
 
-    // Update biography in mock database
-    const updatedBio = updateBiography({
+    // Update biography in database
+    const updatedBio = await updateBiography({
       full_name,
       title,
       bio,
