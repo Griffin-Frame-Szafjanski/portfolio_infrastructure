@@ -27,6 +27,8 @@ export async function PUT(request, { params }) {
       github_url,
       image_url,
       video_url,
+      pdf_url,
+      pdf_file_key,
       display_order,
       featured
     } = body;
@@ -42,6 +44,8 @@ export async function PUT(request, { params }) {
       github_url,
       image_url,
       video_url,
+      pdf_url,
+      pdf_file_key,
       display_order: display_order || 0,
       featured: featured || false
     });
