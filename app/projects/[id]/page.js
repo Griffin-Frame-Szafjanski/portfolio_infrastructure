@@ -5,7 +5,7 @@ import { use } from 'react';
 import Link from 'next/link';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import { getYouTubeVideoId, isYouTubeUrl, getYouTubeEmbedUrl } from '@/lib/youtube';
+import ProjectMediaTabs from '../../components/ProjectMediaTabs';
 
 export default function ProjectDetailPage({ params }) {
   const resolvedParams = use(params);
@@ -93,20 +93,16 @@ export default function ProjectDetailPage({ params }) {
             Back to Projects
           </Link>
 
-          {/* Project Hero */}
+          {/* Project Header Card */}
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
             <div className="h-64 bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-8xl font-bold">
               {initial}
             </div>
             
             <div className="p-8">
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              <h1 className="text-4xl font-bold text-gray-900 mb-6">
                 {project.title}
               </h1>
-              
-              <p className="text-xl text-gray-600 mb-6 leading-relaxed">
-                {project.description}
-              </p>
 
               {/* Technology Tags */}
               <div className="flex flex-wrap gap-2 mb-6">
@@ -119,6 +115,15 @@ export default function ProjectDetailPage({ params }) {
                   </span>
                 ))}
               </div>
+
+              {/* Long Description */}
+              {project.long_description && (
+                <div className="prose prose-lg max-w-none mb-6">
+                  <p className="text-gray-700 text-lg leading-relaxed whitespace-pre-line">
+                    {project.long_description}
+                  </p>
+                </div>
+              )}
 
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-4">
@@ -153,50 +158,12 @@ export default function ProjectDetailPage({ params }) {
             </div>
           </div>
 
-          {/* Detailed Information */}
-          {project.long_description && (
-            <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Project Details</h2>
-              <div className="prose prose-lg max-w-none">
-                <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                  {project.long_description}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* YouTube Video Embed */}
-          {project.video_url && isYouTubeUrl(project.video_url) && (
-            <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Video Demo</h2>
-              <div className="aspect-video w-full rounded-lg overflow-hidden shadow-md">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src={getYouTubeEmbedUrl(getYouTubeVideoId(project.video_url))}
-                  title={project.title}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full"
-                ></iframe>
-              </div>
-            </div>
-          )}
-
-          {/* Demo Type Badge - Only show if NOT YouTube video */}
-          {project.demo_type && project.demo_type !== 'none' && !isYouTubeUrl(project.video_url) && (
-            <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
-              <div className="flex items-center">
-                <svg className="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
-                <span className="text-green-700 font-semibold">
-                  {project.demo_type === 'live' ? 'Live Demo Available' : 'Video Demo Available'}
-                </span>
-              </div>
-            </div>
-          )}
+          {/* Media Tabs - Video/PDF */}
+          <ProjectMediaTabs 
+            videoUrl={project.video_url}
+            pdfUrl={project.pdf_url}
+            projectTitle={project.title}
+          />
         </div>
       </main>
       <Footer />
