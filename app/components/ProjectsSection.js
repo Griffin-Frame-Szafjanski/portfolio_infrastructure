@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 function ProjectCard({ project }) {
   const initial = project.title ? project.title.charAt(0).toUpperCase() : '?';
@@ -8,10 +9,22 @@ function ProjectCard({ project }) {
   
   return (
     <div className="bg-white rounded-2xl p-8 shadow-md transition-all hover:-translate-y-1 hover:shadow-xl border border-gray-200">
-      <div className="w-full h-48 bg-gradient-to-br from-primary to-secondary rounded-xl mb-6 flex items-center justify-center text-white text-5xl font-bold">
-        {initial}
+      <div className="w-full h-48 rounded-xl mb-6 overflow-hidden">
+        {project.image_url ? (
+          <img 
+            src={project.image_url} 
+            alt={project.title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-5xl font-bold">
+            {initial}
+          </div>
+        )}
       </div>
-      <h3 className="text-2xl font-bold mb-2 text-gray-900">{project.title}</h3>
+      <Link href={`/projects/${project.id}`}>
+        <h3 className="text-2xl font-bold mb-2 text-gray-900 hover:text-primary cursor-pointer transition-colors">{project.title}</h3>
+      </Link>
       <p className="text-gray-600 mb-6 leading-relaxed">{project.description}</p>
       <div className="flex flex-wrap gap-2 mb-6">
         {techTags.map((tech, index) => (
@@ -23,20 +36,28 @@ function ProjectCard({ project }) {
           </span>
         )}
       </div>
-      {(project.project_url || project.github_url) && (
-        <div className="flex gap-4 pt-6 border-t border-gray-200">
-          {project.project_url && (
-            <a href={project.project_url} className="flex-1 text-center py-3 bg-primary text-white rounded-lg font-medium transition-all hover:bg-primary/90 hover:scale-105" target="_blank" rel="noopener noreferrer">
-              View Live
-            </a>
-          )}
-          {project.github_url && (
-            <a href={project.github_url} className="flex-1 text-center py-3 bg-gray-100 text-gray-900 rounded-lg font-medium transition-all hover:bg-gray-200" target="_blank" rel="noopener noreferrer">
-              View Code
-            </a>
-          )}
-        </div>
-      )}
+      <div className="flex flex-col gap-3 pt-6 border-t border-gray-200">
+        <Link 
+          href={`/projects/${project.id}`}
+          className="w-full text-center py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-medium transition-all hover:shadow-lg hover:scale-105"
+        >
+          View Project Details
+        </Link>
+        {(project.project_url || project.github_url) && (
+          <div className="flex gap-3">
+            {project.project_url && (
+              <a href={project.project_url} className="flex-1 text-center py-2 bg-primary text-white rounded-lg font-medium text-sm transition-all hover:bg-primary/90" target="_blank" rel="noopener noreferrer">
+                Live Demo
+              </a>
+            )}
+            {project.github_url && (
+              <a href={project.github_url} className="flex-1 text-center py-2 bg-gray-100 text-gray-900 rounded-lg font-medium text-sm transition-all hover:bg-gray-200" target="_blank" rel="noopener noreferrer">
+                Source Code
+              </a>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

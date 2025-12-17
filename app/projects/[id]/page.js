@@ -95,8 +95,18 @@ export default function ProjectDetailPage({ params }) {
 
           {/* Project Header Card */}
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
-            <div className="h-64 bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-8xl font-bold">
-              {initial}
+            <div className="h-64 overflow-hidden">
+              {project.image_url ? (
+                <img 
+                  src={project.image_url} 
+                  alt={project.title}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="h-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-8xl font-bold">
+                  {initial}
+                </div>
+              )}
             </div>
             
             <div className="p-8">
