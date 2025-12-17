@@ -39,6 +39,7 @@ export default function PDFViewer({ pdfUrl, title = 'PDF Document', showHeader =
         <iframe
           src={pdfUrl}
           className="w-full h-full border-0 rounded-lg"
+          style={{ height: '100%', minHeight: '842px' }}
           title={title}
         />
       </div>
