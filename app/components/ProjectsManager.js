@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react';
+import ProjectMediaManager from './ProjectMediaManager';
 
 export default function ProjectsManager() {
+  const [mediaManagerProjectId, setMediaManagerProjectId] = useState(null);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -246,6 +248,16 @@ export default function ProjectsManager() {
                   </div>
                   <div className="project-actions">
                     <button 
+                      onClick={() => setMediaManagerProjectId(project.id)}
+                      className="btn btn-sm btn-media"
+                      title="Manage Videos & PDFs"
+                    >
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z" />
+                      </svg>
+                      Media
+                    </button>
+                    <button 
                       onClick={() => handleEdit(project)}
                       className="btn btn-sm btn-secondary"
                     >
@@ -457,6 +469,13 @@ export default function ProjectsManager() {
         </div>
       )}
 
+      {mediaManagerProjectId && (
+        <ProjectMediaManager 
+          projectId={mediaManagerProjectId}
+          onClose={() => setMediaManagerProjectId(null)}
+        />
+      )}
+
       <style jsx>{`
         .projects-manager {
           max-width: 1000px;
@@ -576,6 +595,23 @@ export default function ProjectsManager() {
         .btn-sm {
           padding: var(--spacing-xs) var(--spacing-md);
           font-size: 0.9rem;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.25rem;
+        }
+
+        .btn-media {
+          background-color: #8b5cf6;
+          color: white;
+        }
+
+        .btn-media:hover {
+          background-color: #7c3aed;
+        }
+
+        .btn-media svg {
+          width: 1rem;
+          height: 1rem;
         }
 
         .btn-danger {

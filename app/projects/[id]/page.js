@@ -5,7 +5,7 @@ import { use } from 'react';
 import Link from 'next/link';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import ProjectMediaTabs from '../../components/ProjectMediaTabs';
+import ProjectMediaGallery from '../../components/ProjectMediaGallery';
 
 export default function ProjectDetailPage({ params }) {
   const resolvedParams = use(params);
@@ -158,10 +158,9 @@ export default function ProjectDetailPage({ params }) {
             </div>
           </div>
 
-          {/* Media Tabs - Video/PDF */}
-          <ProjectMediaTabs 
-            videoUrl={project.video_url}
-            pdfUrl={project.pdf_url}
+          {/* Media Gallery - Multiple Videos/PDFs */}
+          <ProjectMediaGallery 
+            projectId={project.id}
             projectTitle={project.title}
           />
         </div>

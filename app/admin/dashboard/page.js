@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import BiographyEditor from '@/app/components/BiographyEditor';
 import ProjectsManager from '@/app/components/ProjectsManager';
 import MessagesManager from '@/app/components/MessagesManager';
+import ChangePasswordForm from '@/app/components/ChangePasswordForm';
 
 export default function AdminDashboard() {
   const [user, setUser] = useState(null);
@@ -147,6 +148,8 @@ export default function AdminDashboard() {
                   </a>
                 </div>
               </div>
+              
+              <ChangePasswordForm />
             </div>
           )}
 
