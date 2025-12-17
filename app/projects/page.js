@@ -12,9 +12,19 @@ function ProjectCard({ project }) {
   return (
     <Link href={`/projects/${project.id}`} className="group block">
       <div className="bg-white rounded-2xl p-6 shadow-md transition-all hover:-translate-y-2 hover:shadow-xl border border-gray-200 h-full">
-        {/* Project Initial/Icon */}
-        <div className="w-full h-40 bg-gradient-to-br from-primary to-secondary rounded-xl mb-4 flex items-center justify-center text-white text-5xl font-bold group-hover:scale-105 transition-transform">
-          {initial}
+        {/* Project Image/Icon */}
+        <div className="w-full h-40 rounded-xl mb-4 overflow-hidden group-hover:scale-105 transition-transform">
+          {project.image_url ? (
+            <img 
+              src={project.image_url} 
+              alt={project.title}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-5xl font-bold">
+              {initial}
+            </div>
+          )}
         </div>
         
         {/* Project Title */}

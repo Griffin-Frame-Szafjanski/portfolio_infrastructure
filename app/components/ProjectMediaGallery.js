@@ -305,8 +305,7 @@ export default function ProjectMediaGallery({ projectId, projectTitle }) {
 
         .pdf-wrapper {
           width: 100%;
-          min-height: 600px;
-          max-height: 800px;
+          height: 800px;
           border-radius: 0.75rem;
           overflow: hidden;
           box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
@@ -341,7 +340,7 @@ export default function ProjectMediaGallery({ projectId, projectTitle }) {
           }
 
           .pdf-wrapper {
-            min-height: 400px;
+            height: 600px;
           }
 
           .arrow-button {
