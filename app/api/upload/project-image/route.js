@@ -31,11 +31,11 @@ export async function POST(request) {
       );
     }
 
-    // Validate file size (5MB max for images)
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    // Validate file size (3MB max for images - Vercel limit is 4.5MB)
+    const maxSize = 3 * 1024 * 1024; // 3MB
     if (file.size > maxSize) {
       return NextResponse.json(
-        { success: false, error: 'File size must be less than 5MB' },
+        { success: false, error: 'File size must be less than 3MB. Please compress your image or use a smaller file.' },
         { status: 400 }
       );
     }

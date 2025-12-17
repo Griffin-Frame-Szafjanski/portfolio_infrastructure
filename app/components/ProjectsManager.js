@@ -96,9 +96,9 @@ export default function ProjectsManager() {
       return;
     }
 
-    // Validate file size (5MB max)
-    if (file.size > 5 * 1024 * 1024) {
-      setMessage({ type: 'error', text: 'Image file must be less than 5MB' });
+    // Validate file size (3MB max)
+    if (file.size > 3 * 1024 * 1024) {
+      setMessage({ type: 'error', text: 'Image file must be less than 3MB' });
       return;
     }
 
@@ -375,7 +375,7 @@ export default function ProjectsManager() {
                   className="form-input"
                 />
                 <small className="form-help">
-                  {uploadingImage ? 'Uploading image...' : 'Upload an image (JPEG, PNG, WebP, or GIF, max 5MB)'}
+                  {uploadingImage ? 'Uploading image...' : 'Upload an image (JPEG, PNG, WebP, or GIF, max 3MB)'}
                 </small>
                 {formData.image_url && (
                   <div className="uploaded-file-info">
