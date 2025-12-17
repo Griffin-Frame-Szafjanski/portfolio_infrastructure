@@ -22,6 +22,7 @@ export default function ProjectsManager() {
     display_order: 0,
     featured: false
   });
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     fetchProjects();
@@ -82,6 +83,54 @@ export default function ProjectsManager() {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+    if (!validTypes.includes(file.type)) {
+      setMessage({ type: 'error', text: 'Please select a valid image file (JPEG, PNG, WebP, or GIF)' });
+      return;
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage({ type: 'error', text: 'Image file must be less than 5MB' });
+      return;
+    }
+
+    setUploadingImage(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append('file', file);
+
+      const response = await fetch('/api/upload/project-image', {
+        method: 'POST',
+        body: formDataUpload,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setFormData(prev => ({
+          ...prev,
+          image_url: data.url
+        }));
+        setMessage({ type: 'success', text: 'Image uploaded successfully!' });
+      } else {
+        setMessage({ type: 'error', text: data.error || 'Image upload failed' });
+      }
+    } catch (error) {
+      console.error('Image upload error:', error);
+      setMessage({ type: 'error', text: 'Failed to upload image' });
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -316,18 +365,29 @@ export default function ProjectsManager() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="image_url">Project Image URL</label>
+                <label htmlFor="image_upload">Project Thumbnail Image</label>
                 <input
-                  type="url"
-                  id="image_url"
-                  name="image_url"
-                  value={formData.image_url}
-                  onChange={handleChange}
+                  type="file"
+                  id="image_upload"
+                  accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                  onChange={handleImageUpload}
+                  disabled={uploadingImage}
                   className="form-input"
-                  placeholder="https://example.com/image.jpg"
                 />
                 <small className="form-help">
-                  Thumbnail image for project cards (use Media button to add videos/PDFs)
+                  {uploadingImage ? 'Uploading image...' : 'Upload an image (JPEG, PNG, WebP, or GIF, max 5MB)'}
+                </small>
+                {formData.image_url && (
+                  <div className="uploaded-file-info">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                    </svg>
+                    <span>Image uploaded</span>
+                    <a href={formData.image_url} target="_blank" rel="noopener noreferrer">View</a>
+                  </div>
+                )}
+                <small className="form-help" style={{marginTop: '0.5rem'}}>
+                  Use the Media button after saving to add videos/PDFs
                 </small>
               </div>
             </div>

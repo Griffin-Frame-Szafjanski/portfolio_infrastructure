@@ -1,0 +1,53 @@
+import { put } from '@vercel/blob';
+import { NextResponse } from 'next/server';
+
+export async function POST(request) {
+  try {
+    const formData = await request.formData();
+    const file = formData.get('file');
+
+    if (!file) {
+      return NextResponse.json(
+        { success: false, error: 'No file provided' },
+        { status: 400 }
+      );
+    }
+
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+    if (!validTypes.includes(file.type)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid file type. Please upload a valid image (JPEG, PNG, WebP, or GIF)' },
+        { status: 400 }
+      );
+    }
+
+    // Validate file size (5MB max for images)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      return NextResponse.json(
+        { success: false, error: 'File size must be less than 5MB' },
+        { status: 400 }
+      );
+    }
+
+    // Upload to Vercel Blob
+    const blob = await put(`project-images/${Date.now()}-${file.name}`, file, {
+      access: 'public',
+    });
+
+    return NextResponse.json({
+      success: true,
+      url: blob.url,
+      fileKey: blob.url, // For potential future deletion
+      message: 'Image uploaded successfully'
+    });
+
+  } catch (error) {
+    console.error('Image upload error:', error);
+    return NextResponse.json(
+      { success: false, error: 'Failed to upload image' },
+      { status: 500 }
+    );
+  }
+}
