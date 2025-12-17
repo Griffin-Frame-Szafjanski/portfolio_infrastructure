@@ -43,22 +43,22 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-secondary p-6">
-      <div className="bg-white rounded-2xl shadow-2xl p-12 max-w-md w-full">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-secondary dark:from-gray-800 dark:to-gray-900 p-6 transition-colors">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-12 max-w-md w-full transition-colors">
         <div className="text-center mb-12">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Login</h1>
-          <p className="text-gray-600">Sign in to manage your portfolio</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Admin Login</h1>
+          <p className="text-gray-600 dark:text-gray-300">Sign in to manage your portfolio</p>
         </div>
 
         <form onSubmit={handleSubmit} className="mb-8">
           {error && (
-            <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6 border border-red-200">
+            <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-4 rounded-lg mb-6 border border-red-200 dark:border-red-800">
               {error}
             </div>
           )}
 
           <div className="mb-6">
-            <label htmlFor="username" className="block mb-2 font-medium text-gray-900">Username</label>
+            <label htmlFor="username" className="block mb-2 font-medium text-gray-900 dark:text-gray-100">Username</label>
             <input
               type="text"
               id="username"
@@ -67,12 +67,12 @@ export default function AdminLogin() {
               required
               autoComplete="username"
               disabled={loading}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg text-base transition-colors focus:outline-none focus:border-primary disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg text-base transition-colors focus:outline-none focus:border-primary disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:cursor-not-allowed bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             />
           </div>
 
           <div className="mb-6">
-            <label htmlFor="password" className="block mb-2 font-medium text-gray-900">Password</label>
+            <label htmlFor="password" className="block mb-2 font-medium text-gray-900 dark:text-gray-100">Password</label>
             <input
               type="password"
               id="password"
@@ -81,7 +81,7 @@ export default function AdminLogin() {
               required
               autoComplete="current-password"
               disabled={loading}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg text-base transition-colors focus:outline-none focus:border-primary disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg text-base transition-colors focus:outline-none focus:border-primary disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:cursor-not-allowed bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             />
           </div>
 
@@ -94,8 +94,8 @@ export default function AdminLogin() {
           </button>
         </form>
 
-        <div className="text-center pt-6 border-t border-gray-200">
-          <p className="text-gray-500 text-sm">Default credentials: admin / admin123</p>
+        <div className="text-center pt-6 border-t border-gray-200 dark:border-gray-700">
+          <p className="text-gray-500 dark:text-gray-400 text-sm">Default credentials: admin / admin123</p>
         </div>
       </div>
     </div>

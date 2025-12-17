@@ -46,8 +46,8 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="admin-loading">
-        <div className="loading">Loading admin dashboard...</div>
+      <div className="admin-loading dark:bg-gray-900">
+        <div className="loading dark:text-gray-100">Loading admin dashboard...</div>
       </div>
     );
   }
@@ -59,11 +59,11 @@ export default function AdminDashboard() {
   return (
     <div className="admin-container">
       {/* Admin Header */}
-      <header className="admin-header">
+      <header className="admin-header dark:bg-gray-800 dark:border-b dark:border-gray-700">
         <div className="admin-header-content">
-          <h1 className="admin-logo">Portfolio Admin</h1>
+          <h1 className="admin-logo dark:text-blue-400">Portfolio Admin</h1>
           <div className="admin-user-menu">
-            <span className="admin-username">{user.username}</span>
+            <span className="admin-username dark:text-gray-300">{user.username}</span>
             <button onClick={handleLogout} className="btn btn-secondary">
               Logout
             </button>
@@ -73,7 +73,7 @@ export default function AdminDashboard() {
 
       <div className="admin-layout">
         {/* Sidebar Navigation */}
-        <aside className="admin-sidebar">
+        <aside className="admin-sidebar dark:bg-gray-800">
           <nav className="admin-nav">
             <button
               className={`admin-nav-item ${activeTab === 'overview' ? 'active' : ''}`}
@@ -115,7 +115,7 @@ export default function AdminDashboard() {
         </aside>
 
         {/* Main Content Area */}
-        <main className="admin-main">
+        <main className="admin-main dark:bg-gray-800">
           {activeTab === 'overview' && (
             <div className="admin-section">
               <h2>Dashboard Overview</h2>
@@ -185,11 +185,17 @@ export default function AdminDashboard() {
           display: flex;
           align-items: center;
           justify-content: center;
+          transition: background-color 0.3s;
         }
 
         .admin-container {
           min-height: 100vh;
           background-color: var(--color-bg-alt);
+          transition: background-color 0.3s;
+        }
+
+        :global(.dark) .admin-container {
+          background-color: rgb(17 24 39);
         }
 
         .admin-header {
@@ -198,6 +204,7 @@ export default function AdminDashboard() {
           position: sticky;
           top: 0;
           z-index: 100;
+          transition: background-color 0.3s;
         }
 
         .admin-header-content {
@@ -243,6 +250,7 @@ export default function AdminDashboard() {
           height: fit-content;
           position: sticky;
           top: calc(64px + var(--spacing-lg));
+          transition: background-color 0.3s;
         }
 
         .admin-nav {
@@ -272,6 +280,15 @@ export default function AdminDashboard() {
           color: var(--color-text);
         }
 
+        :global(.dark) .admin-nav-item {
+          color: rgb(209 213 219);
+        }
+
+        :global(.dark) .admin-nav-item:hover {
+          background-color: rgb(55 65 81);
+          color: rgb(243 244 246);
+        }
+
         .admin-nav-item.active {
           background-color: var(--color-primary);
           color: white;
@@ -282,6 +299,7 @@ export default function AdminDashboard() {
           border-radius: var(--radius-xl);
           padding: var(--spacing-2xl);
           min-height: 500px;
+          transition: background-color 0.3s;
         }
 
         .admin-section h2 {
@@ -290,9 +308,17 @@ export default function AdminDashboard() {
           color: var(--color-text);
         }
 
+        :global(.dark) .admin-section h2 {
+          color: rgb(243 244 246);
+        }
+
         .admin-section > p {
           color: var(--color-text-light);
           margin-bottom: var(--spacing-xl);
+        }
+
+        :global(.dark) .admin-section > p {
+          color: rgb(209 213 219);
         }
 
         .admin-stats {
@@ -306,6 +332,11 @@ export default function AdminDashboard() {
           background: var(--color-bg-alt);
           padding: var(--spacing-lg);
           border-radius: var(--radius-lg);
+          transition: background-color 0.3s;
+        }
+
+        :global(.dark) .stat-card {
+          background: rgb(55 65 81);
         }
 
         .stat-card h3 {
@@ -315,11 +346,19 @@ export default function AdminDashboard() {
           font-weight: 500;
         }
 
+        :global(.dark) .stat-card h3 {
+          color: rgb(209 213 219);
+        }
+
         .stat-number {
           font-size: 2rem;
           font-weight: 700;
           color: var(--color-primary);
           margin: 0;
+        }
+
+        :global(.dark) .stat-number {
+          color: rgb(96 165 250);
         }
 
         .admin-welcome {
