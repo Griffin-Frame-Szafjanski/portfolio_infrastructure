@@ -19,43 +19,54 @@ cd portfolio_infrastructure
 npm install
 ```
 
-### Environment Variables
+### Vercel Setup (Recommended First Step)
 
-Create `.env.local` file in the root directory:
+It's recommended to set up Vercel and environment variables **before** local development:
 
-```env
-# Database
-DATABASE_URL=postgresql://user:password@host/database?sslmode=require
+1. **Sign up/Login to Vercel**: Visit [vercel.com](https://vercel.com)
+2. **Import Project**: Click "Add New" → "Project" → Import your Git repository
+3. **Connect Repository**: Authorize Vercel to access your GitHub/GitLab/Bitbucket
+4. **Do NOT deploy yet** - We need to set up environment variables and database first
 
-# Authentication
-JWT_SECRET=<strong-random-secret-minimum-32-characters>
+This approach allows you to use Vercel's integrations to automatically configure environment variables.
 
-# File Storage (Vercel Blob)
-BLOB_READ_WRITE_TOKEN=<your-vercel-blob-token>
+## 2. Database Setup (Neon via Vercel Integration)
 
-# Environment
-NODE_ENV=development
-```
+### Method 1: Vercel Integration (Recommended)
 
-**Important**: Never commit `.env.local` to version control!
+1. In Vercel Dashboard → Your Project → **Storage** tab
+2. Click "**Create Database**" → Select "**Neon Serverless Postgres**"
+3. Follow the integration wizard:
+   - Choose database name
+   - Select region (choose closest to your users)
+   - Click "Create"
+4. ✅ **Environment variable `DATABASE_URL` is automatically added to your Vercel project**
 
-## 2. Database Setup
+### Method 2: Manual Neon Setup
 
-### Create Database
-
+If you prefer manual setup:
 1. Sign up for [Neon](https://neon.tech)
-2. Create a new project
-3. Copy the connection string to your `.env.local`
+2. Create a new project and database
+3. Copy the connection string
+4. Add to Vercel: Project Settings → Environment Variables
+   - Name: `DATABASE_URL`
+   - Value: `postgresql://user:password@host/database?sslmode=require`
+   - Apply to: Production, Preview, and Development
 
 ### Initialize Schema
 
-Run the complete database schema:
+Once database is created, initialize it:
 
+**Option 1: Using psql**
 ```bash
 psql $DATABASE_URL -f DATABASE_COMPLETE_SCHEMA.sql
 ```
 
-Or copy the contents of `DATABASE_COMPLETE_SCHEMA.sql` and execute in Neon's SQL Editor.
+**Option 2: Using Neon SQL Editor**
+1. Go to your Neon project dashboard
+2. Click "SQL Editor"
+3. Copy/paste contents of `DATABASE_COMPLETE_SCHEMA.sql`
+4. Click "Run"
 
 ### Set Admin Password
 
@@ -79,49 +90,126 @@ WHERE username = 'admin';
 
 ## 3. Vercel Blob Storage Setup
 
-### Create Blob Store
+### Method 1: Vercel Dashboard (Recommended)
 
-1. Install Vercel CLI: `npm i -g vercel`
-2. Login: `vercel login`
-3. Link project: `vercel link`
-4. Create blob store: `vercel blob create`
-5. Copy the token to your `.env.local` as `BLOB_READ_WRITE_TOKEN`
+1. In Vercel Dashboard → Your Project → **Storage** tab
+2. Click "**Create Store**" → Select "**Blob**"
+3. Choose a name for your blob store
+4. Click "**Create**"
+5. ✅ **Environment variable `BLOB_READ_WRITE_TOKEN` is automatically added to your Vercel project**
 
-## 4. Local Development
-
-Start the development server:
+### Method 2: Vercel CLI
 
 ```bash
+# Install Vercel CLI (if not already installed)
+npm i -g vercel
+
+# Login and link project
+vercel login
+vercel link
+
+# Create blob store
+vercel blob create
+
+# Token is automatically added to your project
+```
+
+## 4. Set Additional Environment Variables
+
+After setting up database and blob storage, add remaining environment variables in Vercel:
+
+1. Go to Vercel Dashboard → Your Project → **Settings** → **Environment Variables**
+2. Add the following variables:
+
+### JWT_SECRET (Required)
+
+- **Name**: `JWT_SECRET`
+- **Value**: Generate a secure 32+ character random string:
+  ```bash
+  node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+  ```
+- **Apply to**: Production, Preview, Development
+
+### ADMIN_USERNAME (Optional)
+
+- **Name**: `ADMIN_USERNAME`
+- **Value**: `admin` (or your preferred username)
+- **Apply to**: Production, Preview, Development
+- Note: Default is `admin` if not set
+
+### ADMIN_PASSWORD (Optional)
+
+- **Name**: `ADMIN_PASSWORD`
+- **Value**: BCrypt hashed password (see step 2.3 for generation)
+- **Apply to**: Production, Preview, Development
+- Note: Default password is `admin123` if not set (change immediately!)
+
+## 5. Local Development Setup
+
+For local development, you need to pull environment variables from Vercel:
+
+### Option 1: Using Vercel CLI (Recommended)
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Login and link project
+vercel login
+vercel link
+
+# Pull environment variables
+vercel env pull .env.local
+
+# Start development server
 npm run dev
 ```
 
 Visit http://localhost:3000
+
+### Option 2: Manual .env.local (Alternative)
+
+If you prefer not to use Vercel CLI, create `.env.local` manually:
+
+```env
+# Copy these values from Vercel Dashboard → Settings → Environment Variables
+DATABASE_URL=postgresql://...
+JWT_SECRET=your-jwt-secret-here
+BLOB_READ_WRITE_TOKEN=vercel_blob_rw_...
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=$2b$12$hashed-password-here
+```
+
+**Important**: Never commit `.env.local` to version control!
 
 ### Admin Access
 
 - Admin Login: http://localhost:3000/admin/login
 - Admin Dashboard: http://localhost:3000/admin/dashboard
 
-## 5. Production Deployment
+## 6. Production Deployment
+
+Now that all environment variables are set, deploy to production:
 
 ### Deploy to Vercel
 
 ```bash
-# Login to Vercel
-vercel login
-
-# Deploy
+# Using Vercel CLI
 vercel --prod
 ```
 
-### Set Environment Variables in Vercel
+Or use the Vercel Dashboard:
+- Go to your project → **Deployments** tab
+- Click "**Deploy**" or push to your main branch for automatic deployment
 
-In your Vercel dashboard, go to Project Settings → Environment Variables and add:
+### Verify Environment Variables
 
-- `DATABASE_URL`
-- `JWT_SECRET`
-- `BLOB_READ_WRITE_TOKEN`
-- `NODE_ENV=production`
+All required variables should be set:
+- ✅ `DATABASE_URL` (from Neon integration)
+- ✅ `BLOB_READ_WRITE_TOKEN` (from Blob storage)
+- ✅ `JWT_SECRET` (manually added)
+- ✅ `ADMIN_USERNAME` (optional, manually added)
+- ✅ `ADMIN_PASSWORD` (optional, manually added)
 
 ### Post-Deployment
 
@@ -131,7 +219,7 @@ In your Vercel dashboard, go to Project Settings → Environment Variables and a
 4. Upload your resume
 5. Create projects with media
 
-## 6. Using the Admin Panel
+## 7. Using the Admin Panel
 
 ### Biography Management
 - Update personal information
@@ -183,24 +271,38 @@ portfolio_infrastructure/
 ## Troubleshooting
 
 ### Database Connection Issues
-- Verify `DATABASE_URL` is correct
-- Check if Neon database is active
-- Ensure SSL mode is set correctly
+- **Verify environment variable**: Go to Vercel Dashboard → Settings → Environment Variables
+- Check `DATABASE_URL` is set correctly in all environments
+- Verify Neon database is active in Neon dashboard
+- Ensure SSL mode is set: `?sslmode=require`
 
 ### File Upload Failures
-- Verify `BLOB_READ_WRITE_TOKEN` is set
-- Check Vercel Blob storage quota
-- Ensure file sizes are within limits
+- **Verify `BLOB_READ_WRITE_TOKEN`** is set in Vercel environment variables
+- Check Vercel Blob storage exists (Storage tab)
+- Check Vercel Blob storage quota and limits
+- Ensure file sizes are within limits (10MB default)
 
 ### Authentication Problems
-- Verify `JWT_SECRET` is set (32+ characters)
-- Check if cookies are enabled
+- **Verify `JWT_SECRET`** is set in Vercel (must be 32+ characters)
+- Check if cookies are enabled in browser
 - Try clearing browser cookies
+- Verify admin password is hashed correctly
+
+### Environment Variables Not Working Locally
+- Run `vercel env pull .env.local` to sync from Vercel
+- Or manually copy values from Vercel Dashboard
+- Restart development server after changing `.env.local`
 
 ### Build Errors
+- Check all required environment variables are set in Vercel
 - Run `npm install` to update dependencies
 - Clear Next.js cache: `rm -rf .next`
 - Check Node.js version (18+ required)
+
+### "Missing environment variables" Error
+- Go to Vercel Dashboard → Settings → Environment Variables
+- Ensure variables are applied to correct environments (Production/Preview/Development)
+- Redeploy after adding new variables
 
 ## Support
 

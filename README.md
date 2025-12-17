@@ -32,15 +32,28 @@ A modern, full-stack portfolio application built with Next.js 15, featuring a po
 
 ## 🚀 Quick Start
 
+### For Production (Vercel - Recommended)
+
+1. **Import to Vercel**: [vercel.com](https://vercel.com) → Import repository
+2. **Set up Neon Database**: Vercel Dashboard → Storage → Create Database → Neon
+3. **Set up Blob Storage**: Vercel Dashboard → Storage → Create Store → Blob
+4. **Add JWT Secret**: Settings → Environment Variables → Add `JWT_SECRET`
+5. **Deploy**: Click Deploy or push to main branch
+
+See **[SETUP.md](SETUP.md)** for complete setup guide.
+
+### For Local Development
+
 ```bash
 # Clone and install
 git clone <your-repo-url>
 cd portfolio_infrastructure
 npm install
 
-# Set up environment (see SETUP.md)
-cp .env.local.example .env.local
-# Edit .env.local with your credentials
+# Pull environment variables from Vercel (requires Vercel CLI)
+vercel login
+vercel link
+vercel env pull .env.local
 
 # Start development
 npm run dev
@@ -124,14 +137,35 @@ portfolio_infrastructure/
 
 ## ⚙️ Environment Variables
 
-Required variables (add to `.env.local` and Vercel):
+### Vercel Setup (Recommended)
 
+Set these in Vercel Dashboard → Project Settings → Environment Variables:
+
+| Variable | Source | Required | Notes |
+|----------|--------|----------|-------|
+| `DATABASE_URL` | Auto (Neon Integration) | Yes | Postgres connection string |
+| `BLOB_READ_WRITE_TOKEN` | Auto (Blob Store) | Yes | File storage token |
+| `JWT_SECRET` | Manual | Yes | 32+ char random string |
+| `ADMIN_USERNAME` | Manual | Optional | Default: `admin` |
+| `ADMIN_PASSWORD` | Manual | Optional | BCrypt hash, default: `admin123` |
+
+### Local Development
+
+Pull from Vercel:
+```bash
+vercel env pull .env.local
+```
+
+Or create `.env.local` manually:
 ```env
 DATABASE_URL=postgresql://...              # Neon Postgres connection string
 JWT_SECRET=<32+ character random string>   # JWT signing secret
 BLOB_READ_WRITE_TOKEN=<vercel-blob-token> # File storage token
-NODE_ENV=production                        # Environment (development/production)
+ADMIN_USERNAME=admin                       # Admin username
+ADMIN_PASSWORD=$2b$12$hashed...           # BCrypt hashed password
 ```
+
+**Important**: Never commit `.env.local` to Git!
 
 ## 🎨 Customization
 
@@ -162,43 +196,65 @@ theme: {
 5. Keep dependencies updated: `npm audit`
 6. Enable HTTPS in production (Vercel provides automatically)
 
-## 📱 Deployment
+## 📱 Deployment to Vercel
 
-Deploy to Vercel in one command:
+### Quick Deploy
+
+1. **Import Project**: Go to [vercel.com](https://vercel.com) and import your repository
+2. **Configure Integrations**:
+   - Add Neon Database (Storage tab → Create Database)
+   - Add Blob Storage (Storage tab → Create Store)
+3. **Set Environment Variables**:
+   - Add `JWT_SECRET` in Settings → Environment Variables
+   - Optionally add `ADMIN_USERNAME` and `ADMIN_PASSWORD`
+4. **Deploy**: Push to main branch or click Deploy
+
+### Using Vercel CLI
 
 ```bash
+vercel login
 vercel --prod
 ```
 
 See **[SETUP.md](SETUP.md)** for detailed deployment instructions including:
-- Database setup
+- Step-by-step Vercel setup
+- Database initialization
 - Environment configuration
-- File storage setup
-- Custom domain configuration
+- Local development setup
+- Troubleshooting
 
 ## 🐛 Troubleshooting
 
 ### Common Issues
 
 **Build Fails**
-- Check environment variables are set in Vercel
+- Check all environment variables are set in Vercel Dashboard
+- Verify variables are applied to correct environments
 - Run `npm install` to update dependencies
 - Clear build cache: `rm -rf .next`
 
 **Database Connection**
-- Verify `DATABASE_URL` format
-- Ensure Neon database is active
-- Check SSL mode is set correctly
+- Check Vercel Dashboard → Settings → Environment Variables for `DATABASE_URL`
+- Verify Neon database is active in Neon dashboard
+- Ensure SSL mode is set: `?sslmode=require`
+- Check Neon integration is properly connected
 
 **File Uploads Fail**
-- Verify `BLOB_READ_WRITE_TOKEN` is set
-- Check file size limits
-- Ensure Vercel Blob storage is configured
+- Verify `BLOB_READ_WRITE_TOKEN` is set in Vercel environment variables
+- Check Vercel Dashboard → Storage tab for Blob store
+- Verify file size limits (10MB default)
+- Check Blob storage quota
 
 **Authentication Issues**
-- Verify `JWT_SECRET` is set (32+ characters)
-- Clear browser cookies
-- Check password was hashed correctly
+- Verify `JWT_SECRET` is set in Vercel (must be 32+ characters)
+- Clear browser cookies and try again
+- Check admin password is BCrypt hashed correctly
+- Verify cookies are enabled in browser
+
+**Local Development Issues**
+- Run `vercel env pull .env.local` to sync variables
+- Restart dev server after changing `.env.local`
+- Ensure you're linked to correct Vercel project: `vercel link`
 
 ## 📝 API Endpoints
 
