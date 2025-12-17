@@ -44,9 +44,6 @@ export async function POST(request) {
       project_url,
       github_url,
       image_url,
-      video_url,
-      pdf_url,
-      pdf_file_key,
       display_order,
       featured
     } = body;
@@ -69,9 +66,6 @@ export async function POST(request) {
       project_url: project_url || null,
       github_url: github_url || null,
       image_url: image_url || null,
-      video_url: video_url || null,
-      pdf_url: pdf_url || null,
-      pdf_file_key: pdf_file_key || null,
       display_order: display_order || 0,
       featured: featured || false
     });

@@ -19,13 +19,9 @@ export default function ProjectsManager() {
     project_url: '',
     github_url: '',
     image_url: '',
-    video_url: '',
-    pdf_url: '',
-    pdf_file_key: '',
     display_order: 0,
     featured: false
   });
-  const [uploadingPDF, setUploadingPDF] = useState(false);
 
   useEffect(() => {
     fetchProjects();
@@ -56,9 +52,6 @@ export default function ProjectsManager() {
       project_url: '',
       github_url: '',
       image_url: '',
-      video_url: '',
-      pdf_url: '',
-      pdf_file_key: '',
       display_order: 0,
       featured: false
     });
@@ -76,9 +69,6 @@ export default function ProjectsManager() {
       project_url: project.project_url || '',
       github_url: project.github_url || '',
       image_url: project.image_url || '',
-      video_url: project.video_url || '',
-      pdf_url: project.pdf_url || '',
-      pdf_file_key: project.pdf_file_key || '',
       display_order: project.display_order || 0,
       featured: project.featured || false
     });
@@ -92,54 +82,6 @@ export default function ProjectsManager() {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
-  };
-
-  const handlePDFUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Validate file type
-    if (file.type !== 'application/pdf') {
-      setMessage({ type: 'error', text: 'Please select a PDF file' });
-      return;
-    }
-
-    // Validate file size (20MB max)
-    if (file.size > 20 * 1024 * 1024) {
-      setMessage({ type: 'error', text: 'PDF file must be less than 20MB' });
-      return;
-    }
-
-    setUploadingPDF(true);
-    setMessage({ type: '', text: '' });
-
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const response = await fetch('/api/upload/project-pdf', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setFormData(prev => ({
-          ...prev,
-          pdf_url: data.url,
-          pdf_file_key: data.fileKey
-        }));
-        setMessage({ type: 'success', text: 'PDF uploaded successfully!' });
-      } else {
-        setMessage({ type: 'error', text: data.error || 'PDF upload failed' });
-      }
-    } catch (error) {
-      console.error('PDF upload error:', error);
-      setMessage({ type: 'error', text: 'Failed to upload PDF' });
-    } finally {
-      setUploadingPDF(false);
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -384,44 +326,9 @@ export default function ProjectsManager() {
                   className="form-input"
                   placeholder="https://example.com/image.jpg"
                 />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="video_url">Video Demo URL</label>
-                <input
-                  type="url"
-                  id="video_url"
-                  name="video_url"
-                  value={formData.video_url}
-                  onChange={handleChange}
-                  className="form-input"
-                  placeholder="https://youtube.com/..."
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="pdf_upload">Project PDF Documentation</label>
-                <input
-                  type="file"
-                  id="pdf_upload"
-                  accept="application/pdf"
-                  onChange={handlePDFUpload}
-                  disabled={uploadingPDF}
-                  className="form-input"
-                />
                 <small className="form-help">
-                  {uploadingPDF ? 'Uploading PDF...' : 'Upload a PDF file (max 20MB)'}
+                  Thumbnail image for project cards (use Media button to add videos/PDFs)
                 </small>
-                {formData.pdf_url && (
-                  <div className="uploaded-file-info">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-                      <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
-                    </svg>
-                    <span>PDF uploaded</span>
-                    <a href={formData.pdf_url} target="_blank" rel="noopener noreferrer">View</a>
-                  </div>
-                )}
               </div>
             </div>
 

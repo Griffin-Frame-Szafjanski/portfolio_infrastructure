@@ -26,9 +26,6 @@ export async function PUT(request, { params }) {
       project_url,
       github_url,
       image_url,
-      video_url,
-      pdf_url,
-      pdf_file_key,
       display_order,
       featured
     } = body;
@@ -37,15 +34,12 @@ export async function PUT(request, { params }) {
     const updatedProject = await updateProject(id, {
       title,
       description,
-      long_description,
-      technologies,
-      tech_stack: technologies, // Keep both for compatibility
-      project_url,
-      github_url,
-      image_url,
-      video_url,
-      pdf_url,
-      pdf_file_key,
+      long_description: long_description || null,
+      technologies: technologies || '',
+      tech_stack: technologies || '',
+      project_url: project_url || null,
+      github_url: github_url || null,
+      image_url: image_url || null,
       display_order: display_order || 0,
       featured: featured || false
     });
