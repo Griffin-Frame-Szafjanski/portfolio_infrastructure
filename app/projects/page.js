@@ -11,7 +11,7 @@ function ProjectCard({ project }) {
   
   return (
     <Link href={`/projects/${project.id}`} className="group block">
-      <div className="bg-white rounded-2xl p-6 shadow-md transition-all hover:-translate-y-2 hover:shadow-xl border border-gray-200 h-full">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md transition-all hover:-translate-y-2 hover:shadow-xl border border-gray-200 dark:border-gray-700 h-full">
         {/* Project Image/Icon */}
         <div className="w-full h-40 rounded-xl mb-4 overflow-hidden group-hover:scale-105 transition-transform">
           {project.image_url ? (
@@ -28,12 +28,12 @@ function ProjectCard({ project }) {
         </div>
         
         {/* Project Title */}
-        <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-primary transition-colors">
+        <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100 group-hover:text-primary transition-colors">
           {project.title}
         </h3>
         
         {/* Short Description */}
-        <p className="text-gray-600 mb-4 line-clamp-3 leading-relaxed">
+        <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3 leading-relaxed">
           {project.description}
         </p>
         
@@ -42,20 +42,20 @@ function ProjectCard({ project }) {
           {techTags.slice(0, 4).map((tech, index) => (
             <span 
               key={index} 
-              className="inline-block px-3 py-1 bg-gray-100 text-primary rounded-full text-sm font-medium"
+              className="inline-block px-3 py-1 bg-gray-100 dark:bg-gray-700 text-primary rounded-full text-sm font-medium"
             >
               {tech}
             </span>
           ))}
           {techTags.length > 4 && (
-            <span className="inline-block px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm font-medium">
+            <span className="inline-block px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full text-sm font-medium">
               +{techTags.length - 4} more
             </span>
           )}
         </div>
         
         {/* View Details Arrow */}
-        <div className="mt-4 pt-4 border-t border-gray-200 flex items-center text-primary font-semibold group-hover:gap-2 transition-all">
+        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center text-primary font-semibold group-hover:gap-2 transition-all">
           View Details
           <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
@@ -99,14 +99,14 @@ export default function ProjectsPage() {
   return (
     <>
       <Header />
-      <main className="py-16 bg-gray-50 min-h-screen">
+      <main className="py-16 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors">
         <div className="max-w-7xl mx-auto px-6">
           {/* Page Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-gray-100">
               My Projects
             </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
               Explore my portfolio of projects showcasing various technologies and solutions
             </p>
           </div>
@@ -122,7 +122,7 @@ export default function ProjectsPage() {
           )}
 
           {error && (
-            <div className="bg-red-50 text-red-600 p-6 rounded-lg text-center">
+            <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-6 rounded-lg text-center border border-red-200 dark:border-red-800">
               Error loading projects. Please refresh the page.
             </div>
           )}

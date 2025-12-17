@@ -55,10 +55,10 @@ export default function BiographyPage() {
   return (
     <>
       <Header />
-      <main className="py-16 bg-gray-50 min-h-screen">
+      <main className="py-16 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors">
         <div className="max-w-6xl mx-auto px-6">
           {/* Biography Section */}
-          <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8 transition-colors">
             <div className="grid md:grid-cols-[300px_1fr] gap-8">
               {/* Profile Photo */}
               <div className="flex flex-col items-center">
@@ -70,7 +70,7 @@ export default function BiographyPage() {
                 
                 {/* Contact Info */}
                 <div className="w-full space-y-3 mt-4">
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                     </svg>
@@ -132,7 +132,7 @@ export default function BiographyPage() {
 
               {/* Biography Content */}
               <div>
-                <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">
                   {bio?.full_name || 'Your Name'}
                 </h1>
                 <p className="text-2xl text-primary mb-6">
@@ -140,8 +140,8 @@ export default function BiographyPage() {
                 </p>
                 
                 <div className="prose prose-lg max-w-none">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">About Me</h2>
-                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">About Me</h2>
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
                     {bio?.bio || 'Your biography will appear here...'}
                   </p>
                 </div>
@@ -150,7 +150,7 @@ export default function BiographyPage() {
           </div>
 
           {/* Resume PDF Viewer */}
-          <ResumePDFViewer pdfUrl={bio?.resume_pdf_url} />
+          <ResumePDFViewer pdfUrl={bio?.resume_pdf_url} title="Resume" showHeader={true} />
         </div>
       </main>
       <Footer />

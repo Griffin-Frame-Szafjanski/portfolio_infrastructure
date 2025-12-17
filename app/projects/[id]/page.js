@@ -80,7 +80,7 @@ export default function ProjectDetailPage({ params }) {
   return (
     <>
       <Header />
-      <main className="py-16 bg-gray-50 min-h-screen">
+      <main className="py-16 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors">
         <div className="max-w-5xl mx-auto px-6">
           {/* Back Button */}
           <Link 
@@ -94,7 +94,7 @@ export default function ProjectDetailPage({ params }) {
           </Link>
 
           {/* Project Header Card */}
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden mb-8 transition-colors">
             <div className="h-64 overflow-hidden">
               {project.image_url ? (
                 <img 
@@ -110,7 +110,7 @@ export default function ProjectDetailPage({ params }) {
             </div>
             
             <div className="p-8">
-              <h1 className="text-4xl font-bold text-gray-900 mb-6">
+              <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-6">
                 {project.title}
               </h1>
 
@@ -119,7 +119,7 @@ export default function ProjectDetailPage({ params }) {
                 {techTags.map((tech, index) => (
                   <span 
                     key={index} 
-                    className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-lg text-sm font-medium"
+                    className="inline-block px-4 py-2 bg-primary/10 dark:bg-primary/20 text-primary rounded-lg text-sm font-medium"
                   >
                     {tech}
                   </span>
@@ -129,7 +129,7 @@ export default function ProjectDetailPage({ params }) {
               {/* Long Description */}
               {project.long_description && (
                 <div className="prose prose-lg max-w-none mb-6">
-                  <p className="text-gray-700 text-lg leading-relaxed whitespace-pre-line">
+                  <p className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed whitespace-pre-line">
                     {project.long_description}
                   </p>
                 </div>
