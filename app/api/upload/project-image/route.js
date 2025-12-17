@@ -1,8 +1,18 @@
 import { put } from '@vercel/blob';
 import { NextResponse } from 'next/server';
+import { verifyAuth } from '@/lib/auth';
 
 export async function POST(request) {
   try {
+    // Verify authentication
+    const authResult = await verifyAuth(request);
+    if (!authResult.authenticated) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     // Check if BLOB_READ_WRITE_TOKEN is configured
     if (!process.env.BLOB_READ_WRITE_TOKEN) {
       console.error('BLOB_READ_WRITE_TOKEN is not configured');

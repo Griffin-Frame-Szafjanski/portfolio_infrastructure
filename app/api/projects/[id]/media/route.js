@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { neon } from '@neondatabase/serverless';
 import { del } from '@vercel/blob';
+import { verifyAuth } from '@/lib/auth';
 
 const sql = neon(process.env.DATABASE_URL);
 
@@ -31,6 +32,15 @@ export async function GET(request, { params }) {
 // POST - Add new media to a project
 export async function POST(request, { params }) {
   try {
+    // Verify authentication
+    const authResult = await verifyAuth(request);
+    if (!authResult.authenticated) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const { id } = await params;
     const body = await request.json();
     const { media_type, title, description, url, file_key, display_order } = body;
@@ -78,6 +88,15 @@ export async function POST(request, { params }) {
 // PUT - Update media item
 export async function PUT(request, { params }) {
   try {
+    // Verify authentication
+    const authResult = await verifyAuth(request);
+    if (!authResult.authenticated) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const { id } = await params;
     const body = await request.json();
     const { media_id, title, description, url, display_order } = body;
@@ -124,6 +143,15 @@ export async function PUT(request, { params }) {
 // DELETE - Remove media item
 export async function DELETE(request, { params }) {
   try {
+    // Verify authentication
+    const authResult = await verifyAuth(request);
+    if (!authResult.authenticated) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const { id } = await params;
     const { searchParams } = new URL(request.url);
     const media_id = searchParams.get('media_id');
