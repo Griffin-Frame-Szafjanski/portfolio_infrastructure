@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Header from '@/app/components/Header';
 import BiographyEditor from '@/app/components/BiographyEditor';
 import ProjectsManager from '@/app/components/ProjectsManager';
 import MessagesManager from '@/app/components/MessagesManager';
@@ -47,8 +46,8 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="admin-loading dark:bg-gray-900">
-        <div className="loading dark:text-gray-100">Loading admin dashboard...</div>
+      <div className="admin-loading">
+        <div className="loading">Loading admin dashboard...</div>
       </div>
     );
   }
@@ -59,24 +58,23 @@ export default function AdminDashboard() {
 
   return (
     <>
-      <Header />
       <div className="admin-container">
         {/* Admin Header */}
-        <header className="admin-header dark:bg-gray-800 dark:border-b dark:border-gray-700">
-        <div className="admin-header-content">
-          <h1 className="admin-logo dark:text-blue-400">Portfolio Admin</h1>
-          <div className="admin-user-menu">
-            <span className="admin-username dark:text-gray-300">{user.username}</span>
-            <button onClick={handleLogout} className="btn btn-secondary">
-              Logout
-            </button>
+        <header className="admin-header">
+          <div className="admin-header-content">
+            <h1 className="admin-logo">Portfolio Admin</h1>
+            <div className="admin-user-menu">
+              <span className="admin-username">{user.username}</span>
+              <button onClick={handleLogout} className="btn btn-secondary">
+                Logout
+              </button>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <div className="admin-layout">
+        <div className="admin-layout">
         {/* Sidebar Navigation */}
-        <aside className="admin-sidebar dark:bg-gray-800">
+        <aside className="admin-sidebar">
           <nav className="admin-nav">
             <button
               className={`admin-nav-item ${activeTab === 'overview' ? 'active' : ''}`}
@@ -118,7 +116,7 @@ export default function AdminDashboard() {
         </aside>
 
         {/* Main Content Area */}
-        <main className="admin-main dark:bg-gray-800">
+        <main className="admin-main">
           {activeTab === 'overview' && (
             <div className="admin-section">
               <h2>Dashboard Overview</h2>
@@ -183,7 +181,7 @@ export default function AdminDashboard() {
       </div>
     </div>
 
-    <style jsx>{`
+      <style jsx>{`
         .admin-loading {
           min-height: 100vh;
           display: flex;
@@ -194,21 +192,15 @@ export default function AdminDashboard() {
 
         .admin-container {
           min-height: 100vh;
-          background-color: var(--color-bg-alt);
-          transition: background-color 0.3s;
-        }
-
-        :global(.dark) .admin-container {
-          background-color: rgb(17 24 39);
+          background-color: #f5f5f5;
         }
 
         .admin-header {
           background: white;
-          box-shadow: var(--shadow-sm);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
           position: sticky;
           top: 0;
           z-index: 100;
-          transition: background-color 0.3s;
         }
 
         .admin-header-content {
@@ -223,7 +215,7 @@ export default function AdminDashboard() {
         .admin-logo {
           font-size: 1.5rem;
           font-weight: 700;
-          color: var(--color-primary);
+          color: #667eea;
           margin: 0;
         }
 
@@ -235,7 +227,7 @@ export default function AdminDashboard() {
 
         .admin-username {
           font-weight: 500;
-          color: var(--color-text-light);
+          color: #6b7280;
         }
 
         .admin-layout {
@@ -249,12 +241,11 @@ export default function AdminDashboard() {
 
         .admin-sidebar {
           background: white;
-          border-radius: var(--radius-xl);
-          padding: var(--spacing-lg);
+          border-radius: 12px;
+          padding: 1.5rem;
           height: fit-content;
           position: sticky;
-          top: calc(64px + var(--spacing-lg));
-          transition: background-color 0.3s;
+          top: calc(64px + 1.5rem);
         }
 
         .admin-nav {
@@ -266,63 +257,45 @@ export default function AdminDashboard() {
         .admin-nav-item {
           display: flex;
           align-items: center;
-          gap: var(--spacing-sm);
-          padding: var(--spacing-sm) var(--spacing-md);
+          gap: 0.75rem;
+          padding: 0.75rem 1rem;
           border: none;
           background: none;
-          border-radius: var(--radius-md);
+          border-radius: 8px;
           font-size: 1rem;
           font-weight: 500;
-          color: var(--color-text-light);
+          color: #6b7280;
           cursor: pointer;
-          transition: var(--transition);
+          transition: all 0.2s;
           text-align: left;
         }
 
         .admin-nav-item:hover {
-          background-color: var(--color-bg-alt);
-          color: var(--color-text);
-        }
-
-        :global(.dark) .admin-nav-item {
-          color: rgb(209 213 219);
-        }
-
-        :global(.dark) .admin-nav-item:hover {
-          background-color: rgb(55 65 81);
-          color: rgb(243 244 246);
+          background-color: #f5f5f5;
+          color: #1f2937;
         }
 
         .admin-nav-item.active {
-          background-color: var(--color-primary);
+          background-color: #667eea;
           color: white;
         }
 
         .admin-main {
           background: white;
-          border-radius: var(--radius-xl);
-          padding: var(--spacing-2xl);
+          border-radius: 12px;
+          padding: 2rem;
           min-height: 500px;
-          transition: background-color 0.3s;
         }
 
         .admin-section h2 {
           font-size: 2rem;
-          margin-bottom: var(--spacing-sm);
-          color: var(--color-text);
-        }
-
-        :global(.dark) .admin-section h2 {
-          color: rgb(243 244 246);
+          margin-bottom: 0.75rem;
+          color: #1f2937;
         }
 
         .admin-section > p {
-          color: var(--color-text-light);
-          margin-bottom: var(--spacing-xl);
-        }
-
-        :global(.dark) .admin-section > p {
-          color: rgb(209 213 219);
+          color: #6b7280;
+          margin-bottom: 2rem;
         }
 
         .admin-stats {
@@ -333,71 +306,58 @@ export default function AdminDashboard() {
         }
 
         .stat-card {
-          background: var(--color-bg-alt);
-          padding: var(--spacing-lg);
-          border-radius: var(--radius-lg);
-          transition: background-color 0.3s;
-        }
-
-        :global(.dark) .stat-card {
-          background: rgb(55 65 81);
+          background: #f5f5f5;
+          padding: 1.5rem;
+          border-radius: 10px;
         }
 
         .stat-card h3 {
           font-size: 0.9rem;
-          color: var(--color-text-light);
-          margin-bottom: var(--spacing-xs);
+          color: #6b7280;
+          margin-bottom: 0.5rem;
           font-weight: 500;
-        }
-
-        :global(.dark) .stat-card h3 {
-          color: rgb(209 213 219);
         }
 
         .stat-number {
           font-size: 2rem;
           font-weight: 700;
-          color: var(--color-primary);
+          color: #667eea;
           margin: 0;
-        }
-
-        :global(.dark) .stat-number {
-          color: rgb(96 165 250);
         }
 
         .admin-welcome {
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           color: white;
-          padding: var(--spacing-xl);
-          border-radius: var(--radius-xl);
+          padding: 2rem;
+          border-radius: 12px;
         }
 
         .admin-welcome h3 {
           font-size: 1.5rem;
-          margin-bottom: var(--spacing-sm);
+          margin-bottom: 0.75rem;
         }
 
         .admin-welcome p {
-          margin-bottom: var(--spacing-lg);
+          margin-bottom: 1.5rem;
           opacity: 0.9;
         }
 
         .quick-actions {
           display: flex;
-          gap: var(--spacing-md);
+          gap: 1rem;
           flex-wrap: wrap;
         }
 
         .admin-placeholder {
-          background: var(--color-bg-alt);
-          padding: var(--spacing-2xl);
-          border-radius: var(--radius-lg);
+          background: #f5f5f5;
+          padding: 2rem;
+          border-radius: 10px;
           text-align: center;
-          color: var(--color-text-light);
+          color: #6b7280;
         }
 
         .admin-placeholder p {
-          margin-bottom: var(--spacing-sm);
+          margin-bottom: 0.75rem;
         }
 
         @media (max-width: 768px) {
