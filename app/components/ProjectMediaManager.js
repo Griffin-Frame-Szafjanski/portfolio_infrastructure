@@ -9,6 +9,8 @@ export default function ProjectMediaManager({ projectId, onClose }) {
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingMedia, setEditingMedia] = useState(null);
   const [uploadingPDF, setUploadingPDF] = useState(false);
+  const [hasOrderChanges, setHasOrderChanges] = useState(false);
+  const [savingOrder, setSavingOrder] = useState(false);
 
   const [formData, setFormData] = useState({
     media_type: 'video',
@@ -50,9 +52,16 @@ export default function ProjectMediaManager({ projectId, onClose }) {
     });
     setShowAddForm(false);
     setEditingMedia(null);
+    setHasOrderChanges(false);
   };
 
   const handleEdit = (item) => {
+    if (hasOrderChanges) {
+      if (!confirm('You have unsaved order changes. Do you want to discard them?')) {
+        return;
+      }
+      setHasOrderChanges(false);
+    }
     setEditingMedia(item);
     setFormData({
       media_type: item.media_type,
@@ -63,6 +72,68 @@ export default function ProjectMediaManager({ projectId, onClose }) {
       display_order: item.display_order || 0
     });
     setShowAddForm(true);
+    setMessage({ type: '', text: '' });
+  };
+
+  const moveItem = (index, direction, mediaType) => {
+    const items = mediaType === 'video' ? videos : pdfs;
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    
+    if (newIndex < 0 || newIndex >= items.length) return;
+
+    const newItems = [...items];
+    [newItems[index], newItems[newIndex]] = [newItems[newIndex], newItems[index]];
+    
+    // Update the full media array
+    const updatedMedia = [...media];
+    const itemsWithType = updatedMedia.filter(m => m.media_type === mediaType);
+    const otherItems = updatedMedia.filter(m => m.media_type !== mediaType);
+    
+    // Replace the items of this type with the reordered ones
+    const finalMedia = [...otherItems, ...newItems];
+    
+    setMedia(finalMedia);
+    setHasOrderChanges(true);
+  };
+
+  const saveOrder = async () => {
+    setSavingOrder(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      // Update display_order for all items based on their position
+      const updates = media.map((item, index) => ({
+        media_id: item.id,
+        display_order: index
+      }));
+
+      // Send updates to API
+      const promises = updates.map(update =>
+        fetch(`/api/projects/${projectId}/media`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(update)
+        })
+      );
+
+      await Promise.all(promises);
+
+      setMessage({ type: 'success', text: 'Media order saved successfully!' });
+      setHasOrderChanges(false);
+      await fetchMedia();
+    } catch (error) {
+      console.error('Error saving order:', error);
+      setMessage({ type: 'error', text: 'Failed to save order' });
+    } finally {
+      setSavingOrder(false);
+    }
+  };
+
+  const cancelOrderChanges = async () => {
+    setHasOrderChanges(false);
+    await fetchMedia();
     setMessage({ type: '', text: '' });
   };
 
@@ -226,12 +297,33 @@ export default function ProjectMediaManager({ projectId, onClose }) {
                 </div>
               </div>
 
-              <button 
-                onClick={() => setShowAddForm(true)} 
-                className="btn btn-primary full-width"
-              >
-                + Add Media
-              </button>
+              <div className="action-buttons">
+                <button 
+                  onClick={() => setShowAddForm(true)} 
+                  className="btn btn-primary"
+                  disabled={hasOrderChanges}
+                >
+                  + Add Media
+                </button>
+                {hasOrderChanges && (
+                  <>
+                    <button 
+                      onClick={saveOrder}
+                      className="btn btn-success"
+                      disabled={savingOrder}
+                    >
+                      {savingOrder ? 'Saving...' : 'Save Order'}
+                    </button>
+                    <button 
+                      onClick={cancelOrderChanges}
+                      className="btn btn-secondary"
+                      disabled={savingOrder}
+                    >
+                      Cancel Changes
+                    </button>
+                  </>
+                )}
+              </div>
 
               {/* Videos Section */}
               {videos.length > 0 && (
@@ -243,8 +335,30 @@ export default function ProjectMediaManager({ projectId, onClose }) {
                     Videos ({videos.length})
                   </h4>
                   <div className="media-list">
-                    {videos.map(item => (
+                    {videos.map((item, index) => (
                       <div key={item.id} className="media-item">
+                        <div className="order-controls">
+                          <button
+                            onClick={() => moveItem(index, 'up', 'video')}
+                            disabled={index === 0}
+                            className="order-btn"
+                            title="Move up"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={() => moveItem(index, 'down', 'video')}
+                            disabled={index === videos.length - 1}
+                            className="order-btn"
+                            title="Move down"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
+                        </div>
                         <div className="media-info">
                           <h5>{item.title}</h5>
                           {item.description && <p>{item.description}</p>}
@@ -256,12 +370,14 @@ export default function ProjectMediaManager({ projectId, onClose }) {
                           <button 
                             onClick={() => handleEdit(item)}
                             className="btn btn-sm btn-secondary"
+                            disabled={hasOrderChanges}
                           >
                             Edit
                           </button>
                           <button 
                             onClick={() => handleDelete(item.id)}
                             className="btn btn-sm btn-danger"
+                            disabled={hasOrderChanges}
                           >
                             Delete
                           </button>
@@ -283,8 +399,30 @@ export default function ProjectMediaManager({ projectId, onClose }) {
                     PDFs ({pdfs.length})
                   </h4>
                   <div className="media-list">
-                    {pdfs.map(item => (
+                    {pdfs.map((item, index) => (
                       <div key={item.id} className="media-item">
+                        <div className="order-controls">
+                          <button
+                            onClick={() => moveItem(index, 'up', 'pdf')}
+                            disabled={index === 0}
+                            className="order-btn"
+                            title="Move up"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={() => moveItem(index, 'down', 'pdf')}
+                            disabled={index === pdfs.length - 1}
+                            className="order-btn"
+                            title="Move down"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
+                        </div>
                         <div className="media-info">
                           <h5>{item.title}</h5>
                           {item.description && <p>{item.description}</p>}
@@ -296,12 +434,14 @@ export default function ProjectMediaManager({ projectId, onClose }) {
                           <button 
                             onClick={() => handleEdit(item)}
                             className="btn btn-sm btn-secondary"
+                            disabled={hasOrderChanges}
                           >
                             Edit
                           </button>
                           <button 
                             onClick={() => handleDelete(item.id)}
                             className="btn btn-sm btn-danger"
+                            disabled={hasOrderChanges}
                           >
                             Delete
                           </button>
@@ -412,20 +552,6 @@ export default function ProjectMediaManager({ projectId, onClose }) {
                   )}
                 </div>
               )}
-
-              <div className="form-group">
-                <label htmlFor="display_order">Display Order</label>
-                <input
-                  type="number"
-                  id="display_order"
-                  name="display_order"
-                  value={formData.display_order}
-                  onChange={handleChange}
-                  className="form-input"
-                  min="0"
-                />
-                <small className="form-help">Lower numbers appear first</small>
-              </div>
 
               <div className="form-actions">
                 <button type="submit" className="btn btn-primary" disabled={uploadingPDF}>
@@ -543,9 +669,16 @@ export default function ProjectMediaManager({ projectId, onClose }) {
           opacity: 0.9;
         }
 
-        .full-width {
-          width: 100%;
+        .action-buttons {
+          display: flex;
+          gap: 0.75rem;
           margin-bottom: 1.5rem;
+          flex-wrap: wrap;
+        }
+
+        .action-buttons .btn {
+          flex: 1;
+          min-width: 150px;
         }
 
         .media-section {
@@ -569,14 +702,41 @@ export default function ProjectMediaManager({ projectId, onClose }) {
 
         .media-item {
           display: flex;
-          justify-content: space-between;
           align-items: flex-start;
-          gap: 1rem;
+          gap: 0.75rem;
           padding: 1rem;
           background: #f9fafb;
           border: 1px solid #e5e7eb;
           border-radius: 0.5rem;
           transition: all 0.2s;
+        }
+
+        .order-controls {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+          flex-shrink: 0;
+        }
+
+        .order-btn {
+          background: white;
+          border: 1px solid #d1d5db;
+          border-radius: 0.375rem;
+          padding: 0.25rem;
+          cursor: pointer;
+          transition: all 0.2s;
+          color: #6b7280;
+        }
+
+        .order-btn:hover:not(:disabled) {
+          background: #f3f4f6;
+          border-color: #9ca3af;
+          color: #374151;
+        }
+
+        .order-btn:disabled {
+          opacity: 0.3;
+          cursor: not-allowed;
         }
 
         .media-item:hover {
@@ -762,6 +922,15 @@ export default function ProjectMediaManager({ projectId, onClose }) {
         .btn-danger {
           background-color: #dc3545;
           color: white;
+        }
+
+        .btn-success {
+          background-color: #28a745;
+          color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+          background-color: #218838;
         }
 
         .btn-danger:hover {
