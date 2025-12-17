@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Header from '@/app/components/Header';
 import BiographyEditor from '@/app/components/BiographyEditor';
 import ProjectsManager from '@/app/components/ProjectsManager';
 import MessagesManager from '@/app/components/MessagesManager';
@@ -57,9 +58,11 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="admin-container">
-      {/* Admin Header */}
-      <header className="admin-header dark:bg-gray-800 dark:border-b dark:border-gray-700">
+    <>
+      <Header />
+      <div className="admin-container">
+        {/* Admin Header */}
+        <header className="admin-header dark:bg-gray-800 dark:border-b dark:border-gray-700">
         <div className="admin-header-content">
           <h1 className="admin-logo dark:text-blue-400">Portfolio Admin</h1>
           <div className="admin-user-menu">
@@ -178,8 +181,9 @@ export default function AdminDashboard() {
           )}
         </main>
       </div>
+    </div>
 
-      <style jsx>{`
+    <style jsx>{`
         .admin-loading {
           min-height: 100vh;
           display: flex;
@@ -406,6 +410,6 @@ export default function AdminDashboard() {
           }
         }
       `}</style>
-    </div>
+    </>
   );
 }
