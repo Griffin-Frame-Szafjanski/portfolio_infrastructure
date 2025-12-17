@@ -3,6 +3,15 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request) {
   try {
+    // Check if BLOB_READ_WRITE_TOKEN is configured
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      console.error('BLOB_READ_WRITE_TOKEN is not configured');
+      return NextResponse.json(
+        { success: false, error: 'Storage not configured. Please set BLOB_READ_WRITE_TOKEN in environment variables.' },
+        { status: 500 }
+      );
+    }
+
     const formData = await request.formData();
     const file = formData.get('file');
 
@@ -46,7 +55,7 @@ export async function POST(request) {
   } catch (error) {
     console.error('Image upload error:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to upload image' },
+      { success: false, error: `Failed to upload image: ${error.message}` },
       { status: 500 }
     );
   }
