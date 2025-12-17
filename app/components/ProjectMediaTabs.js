@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { getYouTubeVideoId, isYouTubeUrl, getYouTubeEmbedUrl } from '@/lib/youtube';
-import ResumePDFViewer from './ResumePDFViewer';
+import PDFViewer from './PDFViewer';
 
 export default function ProjectMediaTabs({ videoUrl, pdfUrl, projectTitle }) {
   const hasVideo = videoUrl && isYouTubeUrl(videoUrl);
@@ -47,7 +47,7 @@ export default function ProjectMediaTabs({ videoUrl, pdfUrl, projectTitle }) {
       <div className="tab-content">
         {activeTab === 'pdf' && hasPDF && (
           <div className="pdf-container">
-            <ResumePDFViewer pdfUrl={pdfUrl} />
+            <PDFViewer pdfUrl={pdfUrl} />
           </div>
         )}
 

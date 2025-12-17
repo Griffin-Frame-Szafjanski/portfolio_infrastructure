@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-export default function ResumePDFViewer({ pdfUrl, title = 'PDF Document', showHeader = false }) {
+export default function PDFViewer({ pdfUrl, title = 'PDF Document', showHeader = false }) {
   if (!pdfUrl) {
     return (
       <div className="bg-gray-100 rounded-xl p-12 text-center">
@@ -35,7 +35,7 @@ export default function ResumePDFViewer({ pdfUrl, title = 'PDF Document', showHe
       )}
 
       {/* Simple iframe PDF viewer - works universally */}
-      <div className="w-full" style={{ height: '100%', minHeight: '600px' }}>
+      <div className="w-full" style={{ height: '100%', minHeight: '842px' }}>
         <iframe
           src={pdfUrl}
           className="w-full h-full border-0 rounded-lg"

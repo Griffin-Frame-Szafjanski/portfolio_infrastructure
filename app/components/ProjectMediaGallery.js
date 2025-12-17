@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { getYouTubeVideoId, isYouTubeUrl, getYouTubeEmbedUrl } from '@/lib/youtube';
-import ResumePDFViewer from './ResumePDFViewer';
+import PDFViewer from './PDFViewer';
 
 export default function ProjectMediaGallery({ projectId, projectTitle }) {
   const [media, setMedia] = useState([]);
@@ -156,7 +156,7 @@ export default function ProjectMediaGallery({ projectId, projectTitle }) {
                     ></iframe>
                   </div>
                 ) : activeMedia.media_type === 'pdf' ? (
-                  <ResumePDFViewer 
+                  <PDFViewer
                     pdfUrl={activeMedia.url}
                     title=""
                     showHeader={false}

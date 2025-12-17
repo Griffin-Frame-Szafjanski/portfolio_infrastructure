@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import ResumePDFViewer from '../components/ResumePDFViewer';
+import PDFViewer from '../components/PDFViewer';
 
 export default function BiographyPage() {
   const [bio, setBio] = useState(null);
@@ -150,7 +150,7 @@ export default function BiographyPage() {
           </div>
 
           {/* Resume PDF Viewer */}
-          <ResumePDFViewer pdfUrl={bio?.resume_pdf_url} title="Resume" showHeader={true} />
+          <PDFViewer pdfUrl={bio?.resume_pdf_url} title="Resume" showHeader={true} />
         </div>
       </main>
       <Footer />
