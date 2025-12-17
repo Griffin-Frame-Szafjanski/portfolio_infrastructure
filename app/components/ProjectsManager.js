@@ -472,17 +472,18 @@ export default function ProjectsManager() {
           align-items: center;
           margin-bottom: var(--spacing-xl);
           padding-bottom: var(--spacing-lg);
-          border-bottom: 2px solid var(--color-bg-alt);
+          border-bottom: 2px solid #f5f5f5;
         }
 
         .manager-header h3 {
           margin: 0 0 var(--spacing-xs) 0;
           font-size: 1.5rem;
+          color: #1f2937;
         }
 
         .manager-header p {
           margin: 0;
-          color: var(--color-text-light);
+          color: #6b7280;
         }
 
         .projects-list {
@@ -494,9 +495,9 @@ export default function ProjectsManager() {
         .empty-state {
           text-align: center;
           padding: var(--spacing-2xl);
-          background: var(--color-bg-alt);
+          background: #f5f5f5;
           border-radius: var(--radius-lg);
-          color: var(--color-text-light);
+          color: #6b7280;
         }
 
         .project-card {
@@ -505,7 +506,7 @@ export default function ProjectsManager() {
           align-items: flex-start;
           gap: var(--spacing-lg);
           padding: var(--spacing-lg);
-          background: var(--color-bg-alt);
+          background: #f5f5f5;
           border-radius: var(--radius-lg);
           transition: var(--transition);
         }
@@ -520,12 +521,12 @@ export default function ProjectsManager() {
 
         .project-info h4 {
           margin: 0 0 var(--spacing-sm) 0;
-          color: var(--color-text);
+          color: #1f2937;
         }
 
         .project-info p {
           margin: 0 0 var(--spacing-sm) 0;
-          color: var(--color-text-light);
+          color: #6b7280;
         }
 
         .project-meta {
@@ -540,7 +541,7 @@ export default function ProjectsManager() {
           background: white;
           border-radius: var(--radius-sm);
           font-size: 0.875rem;
-          color: var(--color-text-light);
+          color: #6b7280;
         }
 
         .featured-badge {
@@ -591,7 +592,7 @@ export default function ProjectsManager() {
         }
 
         .project-form-container {
-          background: var(--color-bg-alt);
+          background: #f5f5f5;
           padding: var(--spacing-xl);
           border-radius: var(--radius-lg);
         }
@@ -624,7 +625,7 @@ export default function ProjectsManager() {
 
         .form-section h4 {
           margin: 0 0 var(--spacing-lg) 0;
-          color: var(--color-text);
+          color: #1f2937;
           font-size: 1.1rem;
         }
 
@@ -646,7 +647,7 @@ export default function ProjectsManager() {
           display: block;
           margin-bottom: var(--spacing-xs);
           font-weight: 500;
-          color: var(--color-text);
+          color: #1f2937;
         }
 
         .checkbox-label {
@@ -671,12 +672,14 @@ export default function ProjectsManager() {
           font-size: 1rem;
           font-family: inherit;
           transition: var(--transition);
+          background-color: white;
+          color: #1f2937;
         }
 
         .form-input:focus,
         .form-textarea:focus {
           outline: none;
-          border-color: var(--color-primary);
+          border-color: #667eea;
         }
 
         .form-textarea {
@@ -688,7 +691,7 @@ export default function ProjectsManager() {
           display: block;
           margin-top: var(--spacing-xs);
           font-size: 0.875rem;
-          color: var(--color-text-light);
+          color: #6b7280;
         }
 
         .uploaded-file-info {

@@ -407,42 +407,22 @@ export default function BiographyEditor() {
           border: 1px solid #c3e6cb;
         }
 
-        :global(.dark) .message-success {
-          background-color: #1e4620;
-          color: #84e1bc;
-          border: 1px solid #2d5a2e;
-        }
-
         .message-error {
           background-color: #f8d7da;
           color: #721c24;
           border: 1px solid #f5c6cb;
         }
 
-        :global(.dark) .message-error {
-          background-color: #4a1c1c;
-          color: #f5a5a8;
-          border: 1px solid #6b2c2c;
-        }
-
         .form-section {
-          background: var(--color-bg-alt);
+          background: #f5f5f5;
           padding: var(--spacing-xl);
           border-radius: var(--radius-lg);
         }
 
-        :global(.dark) .form-section {
-          background: rgb(55 65 81);
-        }
-
         .form-section h3 {
           margin: 0 0 var(--spacing-lg) 0;
-          color: var(--color-text);
+          color: #1f2937;
           font-size: 1.25rem;
-        }
-
-        :global(.dark) .form-section h3 {
-          color: rgb(243 244 246);
         }
 
         .form-row {
@@ -463,11 +443,7 @@ export default function BiographyEditor() {
           display: block;
           margin-bottom: var(--spacing-xs);
           font-weight: 500;
-          color: var(--color-text);
-        }
-
-        :global(.dark) .form-group label {
-          color: rgb(229 231 235);
+          color: #1f2937;
         }
 
         .form-input,
@@ -480,14 +456,7 @@ export default function BiographyEditor() {
           font-family: inherit;
           transition: var(--transition);
           background-color: white;
-          color: #333;
-        }
-
-        :global(.dark) .form-input,
-        :global(.dark) .form-textarea {
-          background-color: rgb(31 41 55);
-          border-color: rgb(75 85 99);
-          color: rgb(243 244 246);
+          color: #1f2937;
         }
 
         .form-input:focus,
@@ -505,11 +474,7 @@ export default function BiographyEditor() {
           display: block;
           margin-top: var(--spacing-xs);
           font-size: 0.875rem;
-          color: var(--color-text-light);
-        }
-
-        :global(.dark) .form-help {
-          color: rgb(156 163 175);
+          color: #6b7280;
         }
 
         .form-actions {
@@ -553,24 +518,15 @@ export default function BiographyEditor() {
         .file-link {
           padding: var(--spacing-sm) var(--spacing-md);
           background-color: #f0f0f0;
-          color: var(--color-primary);
+          color: #667eea;
           border-radius: var(--radius-md);
           text-decoration: none;
           font-size: 0.9rem;
           transition: var(--transition);
         }
 
-        :global(.dark) .file-link {
-          background-color: rgb(55 65 81);
-          color: rgb(96 165 250);
-        }
-
         .file-link:hover {
           background-color: #e0e0e0;
-        }
-
-        :global(.dark) .file-link:hover {
-          background-color: rgb(75 85 99);
         }
 
         .preview-container {
