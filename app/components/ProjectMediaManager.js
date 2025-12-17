@@ -7,6 +7,7 @@ export default function ProjectMediaManager({ projectId, onClose }) {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editingMedia, setEditingMedia] = useState(null);
   const [uploadingPDF, setUploadingPDF] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -48,6 +49,21 @@ export default function ProjectMediaManager({ projectId, onClose }) {
       display_order: 0
     });
     setShowAddForm(false);
+    setEditingMedia(null);
+  };
+
+  const handleEdit = (item) => {
+    setEditingMedia(item);
+    setFormData({
+      media_type: item.media_type,
+      title: item.title,
+      description: item.description || '',
+      url: item.url,
+      file_key: item.file_key || '',
+      display_order: item.display_order || 0
+    });
+    setShowAddForm(true);
+    setMessage({ type: '', text: '' });
   };
 
   const handleChange = (e) => {
@@ -109,26 +125,34 @@ export default function ProjectMediaManager({ projectId, onClose }) {
     setMessage({ type: '', text: '' });
 
     try {
+      const method = editingMedia ? 'PUT' : 'POST';
+      const bodyData = editingMedia 
+        ? { ...formData, media_id: editingMedia.id }
+        : formData;
+
       const response = await fetch(`/api/projects/${projectId}/media`, {
-        method: 'POST',
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(bodyData)
       });
 
       const data = await response.json();
 
       if (data.success) {
-        setMessage({ type: 'success', text: 'Media added successfully!' });
+        setMessage({ 
+          type: 'success', 
+          text: editingMedia ? 'Media updated successfully!' : 'Media added successfully!' 
+        });
         await fetchMedia();
         resetForm();
       } else {
-        setMessage({ type: 'error', text: data.error || 'Failed to add media' });
+        setMessage({ type: 'error', text: data.error || `Failed to ${editingMedia ? 'update' : 'add'} media` });
       }
     } catch (error) {
-      console.error('Error adding media:', error);
-      setMessage({ type: 'error', text: 'An error occurred while adding media' });
+      console.error(`Error ${editingMedia ? 'updating' : 'adding'} media:`, error);
+      setMessage({ type: 'error', text: `An error occurred while ${editingMedia ? 'updating' : 'adding'} media` });
     }
   };
 
@@ -228,12 +252,20 @@ export default function ProjectMediaManager({ projectId, onClose }) {
                             View Video →
                           </a>
                         </div>
-                        <button 
-                          onClick={() => handleDelete(item.id)}
-                          className="btn btn-sm btn-danger"
-                        >
-                          Delete
-                        </button>
+                        <div className="media-actions">
+                          <button 
+                            onClick={() => handleEdit(item)}
+                            className="btn btn-sm btn-secondary"
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            onClick={() => handleDelete(item.id)}
+                            className="btn btn-sm btn-danger"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -260,12 +292,20 @@ export default function ProjectMediaManager({ projectId, onClose }) {
                             View PDF →
                           </a>
                         </div>
-                        <button 
-                          onClick={() => handleDelete(item.id)}
-                          className="btn btn-sm btn-danger"
-                        >
-                          Delete
-                        </button>
+                        <div className="media-actions">
+                          <button 
+                            onClick={() => handleEdit(item)}
+                            className="btn btn-sm btn-secondary"
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            onClick={() => handleDelete(item.id)}
+                            className="btn btn-sm btn-danger"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -284,6 +324,8 @@ export default function ProjectMediaManager({ projectId, onClose }) {
             </>
           ) : (
             <form onSubmit={handleSubmit} className="media-form">
+              <h4 className="form-title">{editingMedia ? 'Edit Media' : 'Add New Media'}</h4>
+              
               <div className="form-group">
                 <label htmlFor="media_type">Media Type *</label>
                 <select
@@ -293,10 +335,12 @@ export default function ProjectMediaManager({ projectId, onClose }) {
                   onChange={handleChange}
                   className="form-input"
                   required
+                  disabled={!!editingMedia}
                 >
                   <option value="video">Video (YouTube)</option>
                   <option value="pdf">PDF Document</option>
                 </select>
+                {editingMedia && <small className="form-help">Media type cannot be changed when editing</small>}
               </div>
 
               <div className="form-group">
@@ -337,8 +381,9 @@ export default function ProjectMediaManager({ projectId, onClose }) {
                     onChange={handleChange}
                     className="form-input"
                     placeholder="https://youtube.com/watch?v=..."
-                    required
+                    required={!editingMedia}
                   />
+                  {editingMedia && <small className="form-help">Leave blank to keep existing URL</small>}
                 </div>
               ) : (
                 <div className="form-group">
@@ -350,10 +395,10 @@ export default function ProjectMediaManager({ projectId, onClose }) {
                     onChange={handlePDFUpload}
                     disabled={uploadingPDF}
                     className="form-input"
-                    required={!formData.url}
+                    required={!formData.url && !editingMedia}
                   />
                   <small className="form-help">
-                    {uploadingPDF ? 'Uploading PDF...' : 'Upload a PDF file (max 20MB)'}
+                    {uploadingPDF ? 'Uploading PDF...' : editingMedia ? 'Upload a new PDF to replace the existing one (optional)' : 'Upload a PDF file (max 20MB)'}
                   </small>
                   {formData.url && (
                     <div className="uploaded-file-info">
@@ -384,7 +429,7 @@ export default function ProjectMediaManager({ projectId, onClose }) {
 
               <div className="form-actions">
                 <button type="submit" className="btn btn-primary" disabled={uploadingPDF}>
-                  Add Media
+                  {editingMedia ? 'Update Media' : 'Add Media'}
                 </button>
                 <button type="button" onClick={resetForm} className="btn btn-secondary">
                   Cancel
@@ -562,8 +607,22 @@ export default function ProjectMediaManager({ projectId, onClose }) {
           font-weight: 500;
         }
 
+        .media-actions {
+          display: flex;
+          gap: 0.5rem;
+          flex-shrink: 0;
+        }
+
         .media-link:hover {
           text-decoration: underline;
+        }
+
+        .form-title {
+          margin: 0 0 1.5rem 0;
+          font-size: 1.25rem;
+          color: #111827;
+          padding-bottom: 1rem;
+          border-bottom: 2px solid #e5e7eb;
         }
 
         .empty-state {
