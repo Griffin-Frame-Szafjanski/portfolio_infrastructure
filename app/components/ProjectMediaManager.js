@@ -832,6 +832,13 @@ export default function ProjectMediaManager({ projectId, onClose }) {
           font-size: 1rem;
           font-family: inherit;
           transition: border-color 0.2s;
+          color: #111827;
+          background-color: white;
+        }
+
+        .form-input option {
+          color: #111827;
+          background-color: white;
         }
 
         .form-input:focus,
