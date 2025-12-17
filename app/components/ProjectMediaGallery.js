@@ -156,9 +156,11 @@ export default function ProjectMediaGallery({ projectId, projectTitle }) {
                     ></iframe>
                   </div>
                 ) : activeMedia.media_type === 'pdf' ? (
-                  <div className="pdf-wrapper">
-                    <ResumePDFViewer pdfUrl={activeMedia.url} />
-                  </div>
+                  <ResumePDFViewer 
+                    pdfUrl={activeMedia.url}
+                    title=""
+                    showHeader={false}
+                  />
                 ) : null}
               </div>
             </>
@@ -174,6 +176,11 @@ export default function ProjectMediaGallery({ projectId, projectTitle }) {
           box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
 
+        :global(.dark) .media-gallery {
+          background: rgb(31 41 55);
+          box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+        }
+
         .gallery-container {
           display: flex;
           flex-direction: column;
@@ -183,6 +190,11 @@ export default function ProjectMediaGallery({ projectId, projectTitle }) {
           display: flex;
           background: #f9fafb;
           border-bottom: 2px solid #e5e7eb;
+        }
+
+        :global(.dark) .type-selector {
+          background: rgb(55 65 81);
+          border-bottom-color: rgb(75 85 99);
         }
 
         .type-button {
@@ -213,9 +225,27 @@ export default function ProjectMediaGallery({ projectId, projectTitle }) {
           border-bottom-color: var(--color-primary, #3b82f6);
         }
 
+        :global(.dark) .type-button {
+          color: rgb(209 213 219);
+        }
+
+        :global(.dark) .type-button:hover {
+          background: rgb(55 65 81);
+          color: rgb(243 244 246);
+        }
+
+        :global(.dark) .type-button.active {
+          background: rgb(31 41 55);
+          color: var(--color-primary, #3b82f6);
+        }
+
         .display-area {
           padding: 2rem;
           background: white;
+        }
+
+        :global(.dark) .display-area {
+          background: rgb(31 41 55);
         }
 
         .media-header {
@@ -236,11 +266,19 @@ export default function ProjectMediaGallery({ projectId, projectTitle }) {
           color: #111827;
         }
 
+        :global(.dark) .media-header h3 {
+          color: rgb(243 244 246);
+        }
+
         .media-description {
           margin: 0;
           color: #6b7280;
           font-size: 1rem;
           line-height: 1.6;
+        }
+
+        :global(.dark) .media-description {
+          color: rgb(209 213 219);
         }
 
         .arrow-navigation {
@@ -282,6 +320,10 @@ export default function ProjectMediaGallery({ projectId, projectTitle }) {
           text-align: center;
         }
 
+        :global(.dark) .navigation-counter {
+          color: rgb(209 213 219);
+        }
+
         .media-content {
           width: 100%;
         }
@@ -303,13 +345,6 @@ export default function ProjectMediaGallery({ projectId, projectTitle }) {
           height: 100%;
         }
 
-        .pdf-wrapper {
-          width: 100%;
-          height: 800px;
-          border-radius: 0.75rem;
-          overflow: hidden;
-          box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        }
 
         @media (max-width: 768px) {
           .display-area {
@@ -339,9 +374,6 @@ export default function ProjectMediaGallery({ projectId, projectTitle }) {
             display: none;
           }
 
-          .pdf-wrapper {
-            height: 600px;
-          }
 
           .arrow-button {
             width: 2.25rem;

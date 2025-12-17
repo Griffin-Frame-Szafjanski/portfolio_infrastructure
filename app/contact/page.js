@@ -68,22 +68,22 @@ export default function ContactPage() {
   return (
     <>
       <Header />
-      <main className="py-16 bg-gray-50 min-h-screen">
+      <main className="py-16 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors">
         <div className="max-w-4xl mx-auto px-6">
           {/* Page Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-gray-100">
               Get In Touch
             </h1>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-gray-600 dark:text-gray-300">
               Have a question or want to work together? I'd love to hear from you!
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* Contact Form */}
-            <div className="bg-white rounded-2xl shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Send a Message</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 transition-colors">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Send a Message</h2>
               
               {status.message && (
                 <div className={`p-4 rounded-lg mb-6 ${
@@ -97,7 +97,7 @@ export default function ContactPage() {
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Name *
                   </label>
                   <input
@@ -108,13 +108,13 @@ export default function ContactPage() {
                     onChange={handleChange}
                     required
                     disabled={loading}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     placeholder="Your name"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Email *
                   </label>
                   <input
@@ -131,7 +131,7 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Subject *
                   </label>
                   <input
@@ -148,7 +148,7 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Message *
                   </label>
                   <textarea
@@ -223,8 +223,8 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl shadow-lg p-8">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Connect on Social Media</h3>
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 transition-colors">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">Connect on Social Media</h3>
                 <div className="flex gap-4">
                   <a 
                     href="https://linkedin.com/in/yourprofile" 

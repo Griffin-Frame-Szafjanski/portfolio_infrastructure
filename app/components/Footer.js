@@ -24,10 +24,10 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer className="bg-gray-900 text-white py-8 text-center">
+    <footer className="bg-gray-900 dark:bg-gray-950 text-white py-8 text-center transition-colors">
       <div className="max-w-7xl mx-auto px-6">
-        <p className="opacity-80">
-          &copy; {currentYear} {bio?.full_name || 'Your Name'}. Built with Next.js and Cloudflare Pages.
+        <p className="opacity-80 dark:opacity-70">
+          &copy; {currentYear} {bio?.full_name || 'Your Name'}. Built with Next.js and Vercel.
         </p>
       </div>
     </footer>
