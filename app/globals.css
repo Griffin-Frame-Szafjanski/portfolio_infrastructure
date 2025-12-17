@@ -8,7 +8,7 @@
   }
   
   body {
-    @apply font-sans text-gray-900 bg-white;
+    @apply font-sans;
   }
 }
 
@@ -63,7 +63,7 @@
   }
 }
 
-/* Admin-specific styles for compatibility */
+/* CSS Variables for Light and Dark Mode */
 :root {
   --color-primary: #667eea;
   --color-primary-dark: #5a67d8;
@@ -93,4 +93,17 @@
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
   
   --transition: all 0.3s ease;
+}
+
+.dark {
+  --color-text: #f9fafb;
+  --color-text-light: #d1d5db;
+  --color-bg: #111827;
+  --color-bg-alt: #1f2937;
+  --color-border: #374151;
+  
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.6);
 }
