@@ -102,7 +102,7 @@ function ProjectCard({ project, onSkillClick }) {
   );
 }
 
-function FilterBar({ skills, categories, selectedCategory, selectedSkills, onCategorySelect, onSkillToggle, onClearFilters }) {
+function FilterBar({ skills, categories, selectedCategories, selectedSkills, onCategoryToggle, onSkillToggle, onClearFilters }) {
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
   const [skillsDropdownOpen, setSkillsDropdownOpen] = useState(false);
   
@@ -128,31 +128,42 @@ function FilterBar({ skills, categories, selectedCategory, selectedSkills, onCat
   const uncategorized = skills.filter(skill => !skill.category_id && skill.project_count > 0);
   
   // Get skills filtered by selected categories
-  const displayedSkills = selectedCategory 
-    ? (selectedCategory === 'uncategorized' ? uncategorized : skillsByCategory[selectedCategory] || [])
+  const displayedSkills = selectedCategories.length > 0
+    ? skills.filter(skill => {
+        if (selectedCategories.includes('uncategorized') && !skill.category_id && skill.project_count > 0) {
+          return true;
+        }
+        return skill.category_id && selectedCategories.includes(skill.category_id) && skill.project_count > 0;
+      })
     : skills.filter(s => s.project_count > 0);
 
-  const hasActiveFilters = selectedCategory || selectedSkills.length > 0;
+  const hasActiveFilters = selectedCategories.length > 0 || selectedSkills.length > 0;
 
   // Calculate selected category names for display
   const getSelectedCategoriesText = () => {
-    if (!selectedCategory) return 'All Categories';
-    if (selectedCategory === 'uncategorized') return 'Other';
-    const category = categories.find(c => c.id === selectedCategory);
-    return category ? category.name : 'Categories';
+    if (selectedCategories.length === 0) return 'All Categories';
+    if (selectedCategories.length === 1) return '1 category selected';
+    return `${selectedCategories.length} categories selected`;
+  };
+  
+  // Calculate selected skills text
+  const getSelectedSkillsText = () => {
+    if (selectedSkills.length === 0) return 'All Skills';
+    if (selectedSkills.length === 1) return '1 skill selected';
+    return `${selectedSkills.length} skills selected`;
   };
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
-      <div className="flex flex-wrap gap-4 items-center">
+      <div className="flex gap-4 items-center">
         {/* Categories Dropdown */}
-        <div className="relative dropdown-container">
+        <div className="relative dropdown-container flex-1">
           <button
             onClick={() => {
               setCategoryDropdownOpen(!categoryDropdownOpen);
               setSkillsDropdownOpen(false);
             }}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors min-w-[250px] justify-between"
+            className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors w-full justify-between"
           >
             <div className="flex items-center gap-2">
               <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,20 +185,6 @@ function FilterBar({ skills, categories, selectedCategory, selectedSkills, onCat
           {categoryDropdownOpen && (
             <div className="absolute top-full left-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-96 overflow-y-auto">
               <div className="p-2">
-                {/* All Categories Option */}
-                <label className="flex items-center gap-3 px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer transition-colors">
-                  <input
-                    type="radio"
-                    checked={!selectedCategory}
-                    onChange={() => {
-                      onCategorySelect(null);
-                      setCategoryDropdownOpen(false);
-                    }}
-                    className="w-4 h-4 text-primary focus:ring-primary"
-                  />
-                  <span className="text-gray-900 dark:text-gray-100 font-medium">All Categories</span>
-                </label>
-
                 {/* Category Options */}
                 {categories.map((category) => {
                   const count = skillsByCategory[category.id]?.length || 0;
@@ -199,13 +196,10 @@ function FilterBar({ skills, categories, selectedCategory, selectedSkills, onCat
                       className="flex items-center gap-3 px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer transition-colors"
                     >
                       <input
-                        type="radio"
-                        checked={selectedCategory === category.id}
-                        onChange={() => {
-                          onCategorySelect(category.id);
-                          setCategoryDropdownOpen(false);
-                        }}
-                        className="w-4 h-4 text-primary focus:ring-primary"
+                        type="checkbox"
+                        checked={selectedCategories.includes(category.id)}
+                        onChange={() => onCategoryToggle(category.id)}
+                        className="w-4 h-4 text-primary focus:ring-primary rounded"
                       />
                       <span className="text-gray-900 dark:text-gray-100 flex-grow">{category.name}</span>
                       <span className="text-sm text-gray-500 dark:text-gray-400">{count}</span>
@@ -217,13 +211,10 @@ function FilterBar({ skills, categories, selectedCategory, selectedSkills, onCat
                 {uncategorized.length > 0 && (
                   <label className="flex items-center gap-3 px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer transition-colors">
                     <input
-                      type="radio"
-                      checked={selectedCategory === 'uncategorized'}
-                      onChange={() => {
-                        onCategorySelect('uncategorized');
-                        setCategoryDropdownOpen(false);
-                      }}
-                      className="w-4 h-4 text-primary focus:ring-primary"
+                      type="checkbox"
+                      checked={selectedCategories.includes('uncategorized')}
+                      onChange={() => onCategoryToggle('uncategorized')}
+                      className="w-4 h-4 text-primary focus:ring-primary rounded"
                     />
                     <span className="text-gray-900 dark:text-gray-100 flex-grow">Other</span>
                     <span className="text-sm text-gray-500 dark:text-gray-400">{uncategorized.length}</span>
@@ -235,21 +226,19 @@ function FilterBar({ skills, categories, selectedCategory, selectedSkills, onCat
         </div>
 
         {/* Skills Dropdown */}
-        <div className="relative dropdown-container">
+        <div className="relative dropdown-container flex-1">
           <button
             onClick={() => {
               setSkillsDropdownOpen(!skillsDropdownOpen);
               setCategoryDropdownOpen(false);
             }}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors min-w-[250px] justify-between"
+            className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors w-full justify-between"
           >
             <div className="flex items-center gap-2">
               <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <span className="font-medium">
-                {selectedSkills.length === 0 ? 'All Skills' : `${selectedSkills.length} Selected`}
-              </span>
+              <span className="font-medium">{getSelectedSkillsText()}</span>
             </div>
             <svg 
               className={`w-5 h-5 text-gray-500 transition-transform ${skillsDropdownOpen ? 'rotate-180' : ''}`} 
@@ -312,12 +301,49 @@ function FilterBar({ skills, categories, selectedCategory, selectedSkills, onCat
       </div>
 
       {/* Active Filters Display */}
-      {selectedSkills.length > 0 && (
+      {(selectedCategories.length > 0 || selectedSkills.length > 0) && (
         <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Active filters:
             </span>
+            {selectedCategories.map(categoryId => {
+              if (categoryId === 'uncategorized') {
+                return (
+                  <span
+                    key="uncategorized"
+                    className="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
+                  >
+                    Other
+                    <button
+                      onClick={() => onCategoryToggle('uncategorized')}
+                      className="hover:bg-primary/20 rounded-full p-0.5"
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </span>
+                );
+              }
+              const category = categories.find(c => c.id === categoryId);
+              return category ? (
+                <span
+                  key={categoryId}
+                  className="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
+                >
+                  {category.name}
+                  <button
+                    onClick={() => onCategoryToggle(categoryId)}
+                    className="hover:bg-primary/20 rounded-full p-0.5"
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </span>
+              ) : null;
+            })}
             {selectedSkills.map(skillId => {
               const skill = skills.find(s => s.id === skillId);
               return skill ? (
@@ -353,21 +379,26 @@ function ProjectsContent() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedSkills, setSelectedSkills] = useState([]);
 
-  // Parse selected skills and category from URL on mount
+  // Parse selected skills and categories from URL on mount
   useEffect(() => {
     const skillsParam = searchParams.get('skills');
-    const categoryParam = searchParams.get('category');
+    const categoriesParam = searchParams.get('categories');
     
     if (skillsParam) {
       const skillIds = skillsParam.split(',').map(id => parseInt(id)).filter(id => !isNaN(id));
       setSelectedSkills(skillIds);
     }
     
-    if (categoryParam) {
-      setSelectedCategory(categoryParam === 'uncategorized' ? 'uncategorized' : parseInt(categoryParam));
+    if (categoriesParam) {
+      const categoryIds = categoriesParam.split(',').map(id => {
+        if (id === 'uncategorized') return 'uncategorized';
+        const parsedId = parseInt(id);
+        return isNaN(parsedId) ? null : parsedId;
+      }).filter(id => id !== null);
+      setSelectedCategories(categoryIds);
     }
   }, []);
 
@@ -443,17 +474,24 @@ function ProjectsContent() {
     loadProjects();
   }, [selectedSkills]);
 
-  const handleCategorySelect = (categoryId) => {
-    setSelectedCategory(categoryId);
-    // Update URL
-    const params = new URLSearchParams();
-    if (categoryId) {
-      params.set('category', categoryId.toString());
-    }
-    if (selectedSkills.length > 0) {
-      params.set('skills', selectedSkills.join(','));
-    }
-    router.push(params.toString() ? `/projects?${params.toString()}` : '/projects');
+  const handleCategoryToggle = (categoryId) => {
+    setSelectedCategories(prev => {
+      const newSelection = prev.includes(categoryId)
+        ? prev.filter(id => id !== categoryId)
+        : [...prev, categoryId];
+      
+      // Update URL
+      const params = new URLSearchParams();
+      if (newSelection.length > 0) {
+        params.set('categories', newSelection.join(','));
+      }
+      if (selectedSkills.length > 0) {
+        params.set('skills', selectedSkills.join(','));
+      }
+      router.push(params.toString() ? `/projects?${params.toString()}` : '/projects');
+      
+      return newSelection;
+    });
   };
 
   const handleSkillToggle = (skillId) => {
@@ -464,8 +502,8 @@ function ProjectsContent() {
       
       // Update URL
       const params = new URLSearchParams();
-      if (selectedCategory) {
-        params.set('category', selectedCategory.toString());
+      if (selectedCategories.length > 0) {
+        params.set('categories', selectedCategories.join(','));
       }
       if (newSelection.length > 0) {
         params.set('skills', newSelection.join(','));
@@ -477,7 +515,7 @@ function ProjectsContent() {
   };
 
   const handleClearFilters = () => {
-    setSelectedCategory(null);
+    setSelectedCategories([]);
     setSelectedSkills([]);
     router.push('/projects');
   };
@@ -503,9 +541,9 @@ function ProjectsContent() {
         <FilterBar
           skills={allSkills}
           categories={categories}
-          selectedCategory={selectedCategory}
+          selectedCategories={selectedCategories}
           selectedSkills={selectedSkills}
-          onCategorySelect={handleCategorySelect}
+          onCategoryToggle={handleCategoryToggle}
           onSkillToggle={handleSkillToggle}
           onClearFilters={handleClearFilters}
         />
@@ -514,7 +552,7 @@ function ProjectsContent() {
         {!loading && !error && (
           <div className="mb-6">
             <p className="text-gray-600 dark:text-gray-300">
-              {selectedSkills.length > 0 || selectedCategory ? (
+              {selectedSkills.length > 0 || selectedCategories.length > 0 ? (
                 <span>
                   Showing <strong>{projects.length}</strong> project{projects.length !== 1 ? 's' : ''} matching your filters
                 </span>
@@ -550,7 +588,7 @@ function ProjectsContent() {
             <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
             </svg>
-            {selectedSkills.length > 0 || selectedCategory ? (
+            {selectedSkills.length > 0 || selectedCategories.length > 0 ? (
               <>
                 <p className="text-gray-600 text-lg mb-2">No projects match your selected filters.</p>
                 <button
