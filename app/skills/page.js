@@ -113,7 +113,7 @@ export default function SkillsPage() {
                       {skills.map((skill) => (
                         <Link
                           key={skill.id}
-                          href={`/projects?skill=${skill.id}`}
+                          href={`/projects?skills=${skill.id}`}
                           className="group"
                         >
                           <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 h-full flex items-center justify-center">
