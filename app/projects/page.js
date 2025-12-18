@@ -6,8 +6,26 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 function ProjectCard({ project }) {
+  const [skills, setSkills] = useState([]);
+  const [loadingSkills, setLoadingSkills] = useState(true);
   const initial = project.title ? project.title.charAt(0).toUpperCase() : '?';
-  const techTags = project.tech_stack ? project.tech_stack.split(',').map(tech => tech.trim()) : [];
+  
+  useEffect(() => {
+    async function fetchSkills() {
+      try {
+        const response = await fetch(`/api/projects/${project.id}/skills`);
+        if (response.ok) {
+          const data = await response.json();
+          setSkills(data.skills || []);
+        }
+      } catch (error) {
+        console.error('Error fetching project skills:', error);
+      } finally {
+        setLoadingSkills(false);
+      }
+    }
+    fetchSkills();
+  }, [project.id]);
   
   return (
     <Link href={`/projects/${project.id}`} className="group block">
@@ -37,20 +55,28 @@ function ProjectCard({ project }) {
           {project.description}
         </p>
         
-        {/* Technology Tags */}
+        {/* Skills Tags */}
         <div className="flex flex-wrap gap-2">
-          {techTags.slice(0, 4).map((tech, index) => (
-            <span 
-              key={index} 
-              className="inline-block px-3 py-1 bg-gray-100 dark:bg-gray-700 text-primary rounded-full text-sm font-medium"
-            >
-              {tech}
-            </span>
-          ))}
-          {techTags.length > 4 && (
-            <span className="inline-block px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full text-sm font-medium">
-              +{techTags.length - 4} more
-            </span>
+          {loadingSkills ? (
+            <span className="text-sm text-gray-400 dark:text-gray-500">Loading...</span>
+          ) : skills.length > 0 ? (
+            <>
+              {skills.slice(0, 4).map((skill) => (
+                <span 
+                  key={skill.id} 
+                  className="inline-block px-3 py-1 bg-gray-100 dark:bg-gray-700 text-primary rounded-full text-sm font-medium"
+                >
+                  {skill.name}
+                </span>
+              ))}
+              {skills.length > 4 && (
+                <span className="inline-block px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full text-sm font-medium">
+                  +{skills.length - 4} more
+                </span>
+              )}
+            </>
+          ) : (
+            <span className="text-sm text-gray-400 dark:text-gray-500">No skills tagged</span>
           )}
         </div>
         

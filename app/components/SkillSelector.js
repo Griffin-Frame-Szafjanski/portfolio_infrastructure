@@ -7,6 +7,7 @@ export default function SkillSelector({ selectedSkillIds = [], onChange }) {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showNewSkillForm, setShowNewSkillForm] = useState(false);
+  const [expandedCategories, setExpandedCategories] = useState({});
   const [newSkillData, setNewSkillData] = useState({
     name: '',
     category_id: ''
@@ -16,6 +17,25 @@ export default function SkillSelector({ selectedSkillIds = [], onChange }) {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const toggleCategory = (categoryName) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [categoryName]: !prev[categoryName]
+    }));
+  };
+
+  const expandAll = () => {
+    const allExpanded = {};
+    Object.keys(getSkillsByCategory()).forEach(cat => {
+      allExpanded[cat] = true;
+    });
+    setExpandedCategories(allExpanded);
+  };
+
+  const collapseAll = () => {
+    setExpandedCategories({});
+  };
 
   const fetchData = async () => {
     try {
@@ -113,13 +133,29 @@ export default function SkillSelector({ selectedSkillIds = [], onChange }) {
           <span className="text-sm font-medium text-gray-700">
             Selected: {selectedCount} skill{selectedCount !== 1 ? 's' : ''}
           </span>
-          <button
-            type="button"
-            onClick={() => setShowNewSkillForm(!showNewSkillForm)}
-            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-          >
-            {showNewSkillForm ? '✕ Cancel' : '+ New Skill'}
-          </button>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={expandAll}
+              className="text-xs text-gray-600 hover:text-gray-700 font-medium"
+            >
+              Expand All
+            </button>
+            <button
+              type="button"
+              onClick={collapseAll}
+              className="text-xs text-gray-600 hover:text-gray-700 font-medium"
+            >
+              Collapse All
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowNewSkillForm(!showNewSkillForm)}
+              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+            >
+              {showNewSkillForm ? '✕ Cancel' : '+ New Skill'}
+            </button>
+          </div>
         </div>
 
         {showNewSkillForm && (
@@ -160,29 +196,49 @@ export default function SkillSelector({ selectedSkillIds = [], onChange }) {
       </div>
 
       <div className="skills-grid">
-        {Object.entries(groupedSkills).map(([categoryName, categorySkills]) => (
-          <div key={categoryName} className="category-group">
-            <h4 className="category-title">{categoryName}</h4>
-            <div className="skills-list">
-              {categorySkills.map((skill) => {
-                const isSelected = selectedSkillIds.includes(skill.id);
-                return (
-                  <label
-                    key={skill.id}
-                    className={`skill-checkbox ${isSelected ? 'selected' : ''}`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={() => handleSkillToggle(skill.id)}
-                    />
-                    <span>{skill.name}</span>
-                  </label>
-                );
-              })}
+        {Object.entries(groupedSkills).map(([categoryName, categorySkills]) => {
+          const isExpanded = expandedCategories[categoryName];
+          return (
+            <div key={categoryName} className="category-group">
+              <button
+                type="button"
+                onClick={() => toggleCategory(categoryName)}
+                className="category-title-button"
+              >
+                <svg 
+                  className={`category-arrow ${isExpanded ? 'expanded' : ''}`} 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                </svg>
+                <h4 className="category-title">{categoryName}</h4>
+                <span className="category-count">({categorySkills.length})</span>
+              </button>
+              {isExpanded && (
+                <div className="skills-list">
+                  {categorySkills.map((skill) => {
+                    const isSelected = selectedSkillIds.includes(skill.id);
+                    return (
+                      <label
+                        key={skill.id}
+                        className={`skill-checkbox ${isSelected ? 'selected' : ''}`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => handleSkillToggle(skill.id)}
+                        />
+                        <span>{skill.name}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {skills.length === 0 && (
@@ -224,19 +280,57 @@ export default function SkillSelector({ selectedSkillIds = [], onChange }) {
           margin-bottom: 0.5rem;
         }
 
+        .category-title-button {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.5rem;
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          transition: background-color 0.2s;
+          border-radius: 4px;
+        }
+
+        .category-title-button:hover {
+          background: #f3f4f6;
+        }
+
+        .category-arrow {
+          width: 1rem;
+          height: 1rem;
+          color: #6b7280;
+          transition: transform 0.2s;
+          flex-shrink: 0;
+        }
+
+        .category-arrow.expanded {
+          transform: rotate(90deg);
+        }
+
         .category-title {
           font-size: 0.75rem;
           font-weight: 600;
           text-transform: uppercase;
           color: #6b7280;
-          margin-bottom: 0.5rem;
           letter-spacing: 0.05em;
+          margin: 0;
+          flex: 1;
+          text-align: left;
+        }
+
+        .category-count {
+          font-size: 0.75rem;
+          color: #9ca3af;
+          font-weight: normal;
         }
 
         .skills-list {
           display: flex;
           flex-wrap: wrap;
           gap: 0.5rem;
+          padding: 0.5rem 0.5rem 0.5rem 2rem;
         }
 
         .skill-checkbox {
