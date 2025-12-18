@@ -30,14 +30,14 @@ function ProjectCard({ project, onSkillClick }) {
   }, [project.id]);
   
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md transition-all hover:shadow-xl border-2 h-full flex flex-col ${
+    <div className={`bg-white dark:bg-gray-800 rounded-xl md:rounded-2xl p-4 sm:p-5 md:p-6 shadow-md transition-all hover:shadow-xl border-2 h-full flex flex-col ${
       project.featured 
         ? 'border-amber-400 dark:border-amber-500' 
         : 'border-gray-200 dark:border-gray-700'
     }`}>
       {/* Project Image/Icon */}
       <Link href={`/projects/${project.id}`} className="block">
-        <div className="w-full h-40 rounded-xl mb-4 overflow-hidden hover:scale-105 transition-transform cursor-pointer">
+        <div className="w-full h-36 sm:h-40 rounded-lg md:rounded-xl mb-3 md:mb-4 overflow-hidden hover:scale-105 transition-transform cursor-pointer">
           {project.image_url ? (
             <img 
               src={project.image_url} 
@@ -172,8 +172,8 @@ function FilterBar({ skills, categories, selectedCategories, selectedSkills, onC
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
-      <div className="flex gap-4 items-center">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-5 md:p-6 mb-6 md:mb-8">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
         {/* Categories Dropdown */}
         <div className="relative dropdown-container flex-1">
           <button
@@ -181,13 +181,13 @@ function FilterBar({ skills, categories, selectedCategories, selectedSkills, onC
               setCategoryDropdownOpen(!categoryDropdownOpen);
               setSkillsDropdownOpen(false);
             }}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors w-full justify-between"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors w-full justify-between text-sm sm:text-base"
           >
-            <div className="flex items-center gap-2">
-              <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex items-center gap-2 min-w-0">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
               </svg>
-              <span className="font-medium">{getSelectedCategoriesText()}</span>
+              <span className="font-medium truncate">{getSelectedCategoriesText()}</span>
             </div>
             <svg 
               className={`w-5 h-5 text-gray-500 transition-transform ${categoryDropdownOpen ? 'rotate-180' : ''}`} 
@@ -250,13 +250,13 @@ function FilterBar({ skills, categories, selectedCategories, selectedSkills, onC
               setSkillsDropdownOpen(!skillsDropdownOpen);
               setCategoryDropdownOpen(false);
             }}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors w-full justify-between"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors w-full justify-between text-sm sm:text-base"
           >
-            <div className="flex items-center gap-2">
-              <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex items-center gap-2 min-w-0">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <span className="font-medium">{getSelectedTagsText()}</span>
+              <span className="font-medium truncate">{getSelectedTagsText()}</span>
             </div>
             <svg 
               className={`w-5 h-5 text-gray-500 transition-transform ${skillsDropdownOpen ? 'rotate-180' : ''}`} 
@@ -506,8 +506,8 @@ function ProjectsContent() {
   };
 
   return (
-    <main className="py-16 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors">
-      <div className="max-w-7xl mx-auto px-6">
+    <main className="py-8 sm:py-12 md:py-16 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Page Header */}
         <PageHeader 
           title="My Projects" 

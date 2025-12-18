@@ -94,30 +94,30 @@ export default function ProjectDetailPage({ params }) {
   return (
     <>
       <Header />
-      <main className="py-16 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors">
-        <div className="max-w-5xl mx-auto px-6">
+      <main className="py-8 md:py-16 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
           {/* Back Button */}
           <Link 
             href="/projects" 
-            className="inline-flex items-center text-primary hover:text-primary/80 font-medium mb-8 transition-colors"
+            className="inline-flex items-center text-primary hover:text-primary/80 font-medium mb-6 md:mb-8 transition-colors text-sm md:text-base"
           >
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 md:w-5 md:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
             </svg>
             Back to Projects
           </Link>
 
           {/* Project Image Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden mb-8 transition-colors">
-            <div className="h-80 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-xl md:rounded-2xl shadow-lg overflow-hidden mb-6 md:mb-8 transition-colors">
+            <div className="w-full max-h-[300px] sm:max-h-[400px] md:max-h-[500px] flex items-center justify-center bg-gray-100 dark:bg-gray-700">
               {project.image_url ? (
                 <img 
                   src={project.image_url} 
                   alt={project.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-auto object-contain max-h-[300px] sm:max-h-[400px] md:max-h-[500px]"
                 />
               ) : (
-                <div className="h-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-8xl font-bold">
+                <div className="w-full aspect-video bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-5xl sm:text-6xl md:text-8xl font-bold">
                   {initial}
                 </div>
               )}
@@ -125,15 +125,15 @@ export default function ProjectDetailPage({ params }) {
           </div>
 
           {/* Project Details Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8 transition-colors">
+          <div className="bg-white dark:bg-gray-800 rounded-xl md:rounded-2xl shadow-lg p-5 sm:p-6 md:p-8 mb-6 md:mb-8 transition-colors">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4 md:mb-6 leading-tight">
                 {project.title}
               </h1>
 
               {/* Skills & Technologies */}
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+              <div className="mb-5 md:mb-6">
+                <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
                   Skills & Technologies
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -143,7 +143,7 @@ export default function ProjectDetailPage({ params }) {
                     skills.map((skill) => (
                       <span 
                         key={skill.id} 
-                        className="inline-block px-4 py-2 bg-primary/10 dark:bg-primary/20 text-primary rounded-lg text-sm font-medium"
+                        className="inline-block px-3 py-1.5 md:px-4 md:py-2 bg-primary/10 dark:bg-primary/20 text-primary rounded-lg text-xs md:text-sm font-medium"
                       >
                         {skill.name}
                       </span>
@@ -156,15 +156,15 @@ export default function ProjectDetailPage({ params }) {
 
               {/* Long Description */}
               {project.long_description && (
-                <div className="prose prose-lg max-w-none mb-6">
-                  <p className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed whitespace-pre-line">
+                <div className="prose prose-base md:prose-lg max-w-none mb-5 md:mb-6">
+                  <p className="text-gray-700 dark:text-gray-300 text-base md:text-lg leading-relaxed whitespace-pre-line">
                     {project.long_description}
                   </p>
                 </div>
               )}
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-col sm:flex-row flex-wrap gap-3 md:gap-4">
                 {project.project_url && (
                   <a 
                     href={project.project_url} 
