@@ -142,8 +142,8 @@ function FilterBar({ skills, categories, selectedCategories, selectedSkills, onC
   // Calculate selected category names for display
   const getSelectedCategoriesText = () => {
     if (selectedCategories.length === 0) return 'All Categories';
-    if (selectedCategories.length === 1) return '1 category selected';
-    return `${selectedCategories.length} categories selected`;
+    if (selectedCategories.length === 1) return 'Filtering by 1 category';
+    return `Filtering by ${selectedCategories.length} categories`;
   };
   
   // Calculate selected skills text
