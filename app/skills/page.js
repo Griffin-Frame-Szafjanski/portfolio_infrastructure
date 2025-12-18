@@ -10,6 +10,7 @@ export default function SkillsPage() {
   const [skills, setSkills] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [expandedCategories, setExpandedCategories] = useState({});
 
   useEffect(() => {
     fetchData();
@@ -63,6 +64,24 @@ export default function SkillsPage() {
 
   const groupedSkills = getSkillsByCategory();
 
+  // Initialize all categories as expanded on first load
+  useEffect(() => {
+    if (Object.keys(groupedSkills).length > 0 && Object.keys(expandedCategories).length === 0) {
+      const initialState = {};
+      Object.keys(groupedSkills).forEach(categoryId => {
+        initialState[categoryId] = true;
+      });
+      setExpandedCategories(initialState);
+    }
+  }, [groupedSkills]);
+
+  const toggleCategory = (categoryId) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [categoryId]: !prev[categoryId]
+    }));
+  };
+
   return (
     <>
       <Header />
@@ -71,7 +90,7 @@ export default function SkillsPage() {
           {/* Page Header */}
           <PageHeader 
             title="Skills & Expertise" 
-            description="An overview of my professional capabilities, technical skills, and areas of expertise"
+            description="An overview of my professional capabilities, technologies, frameworks, and areas of expertise"
           />
 
           {/* Skills Content */}
@@ -87,44 +106,51 @@ export default function SkillsPage() {
               </p>
             </div>
           ) : (
-            <div className="space-y-12">
+            <div className="space-y-6">
               {Object.entries(groupedSkills).map(([categoryId, { category, skills }]) => (
-                <div key={categoryId} className="space-y-6">
-                  {/* Category Header */}
-                  <div className="border-b-2 border-gray-200 dark:border-gray-700 pb-3">
-                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+                <div key={categoryId} className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-colors">
+                  {/* Category Header - Clickable */}
+                  <button
+                    onClick={() => toggleCategory(categoryId)}
+                    className="w-full flex items-center justify-between p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                  >
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white text-left">
                       {category.name}
                     </h2>
-                    {category.description && (
-                      <p className="text-gray-600 dark:text-gray-400 mt-2">
-                        {category.description}
-                      </p>
-                    )}
-                  </div>
+                    <svg
+                      className={`w-6 h-6 text-gray-500 dark:text-gray-400 transition-transform duration-300 ${
+                        expandedCategories[categoryId] ? 'rotate-180' : ''
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
 
-                  {/* Skills Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                    {skills.map((skill) => (
-                      <Link
-                        key={skill.id}
-                        href={`/projects?skills=${skill.id}`}
-                        className="group"
-                      >
-                        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 h-full flex items-center justify-center">
-                          <div className="text-center">
-                            <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                              {skill.name}
-                            </h3>
-                            {skill.description && (
-                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
-                                {skill.description}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
+                  {/* Skills Grid - Collapsible */}
+                  {expandedCategories[categoryId] && (
+                    <div className="px-6 pb-6">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                        {skills.map((skill) => (
+                          <Link
+                            key={skill.id}
+                            href={`/projects?skills=${skill.id}`}
+                            className="group"
+                          >
+                            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-500 h-full flex items-center justify-center">
+                              <div className="text-center">
+                                <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                  {skill.name}
+                                </h3>
+                              </div>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
