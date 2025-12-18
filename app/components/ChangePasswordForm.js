@@ -315,7 +315,7 @@ export default function ChangePasswordForm() {
           display: block;
           margin-bottom: var(--spacing-xs);
           font-weight: 500;
-          color: var(--color-text);
+          color: #1f2937;
         }
 
         .form-input {
@@ -325,19 +325,21 @@ export default function ChangePasswordForm() {
           border-radius: var(--radius-md);
           font-size: 1rem;
           font-family: inherit;
-          transition: var(--transition);
+          transition: all 0.2s;
+          background: white;
+          color: #1f2937;
         }
 
         .form-input:focus {
           outline: none;
-          border-color: var(--color-primary);
+          border-color: #667eea;
         }
 
         .form-help {
           display: block;
           margin-top: var(--spacing-xs);
           font-size: 0.875rem;
-          color: var(--color-text-light);
+          color: #6b7280;
         }
 
         .form-actions {

@@ -13,11 +13,51 @@ export default function AdminDashboard() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+  const [stats, setStats] = useState({
+    totalProjects: 0,
+    totalSkills: 0,
+    unreadMessages: 0,
+    readMessages: 0
+  });
   const router = useRouter();
 
   useEffect(() => {
     checkAuth();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchStats();
+    }
+  }, [user]);
+
+  const fetchStats = async () => {
+    try {
+      // Fetch projects
+      const projectsRes = await fetch('/api/projects');
+      const projectsData = await projectsRes.json();
+      
+      // Fetch skills
+      const skillsRes = await fetch('/api/skills');
+      const skillsData = await skillsRes.json();
+      
+      // Fetch messages
+      const messagesRes = await fetch('/api/admin/messages');
+      const messagesData = await messagesRes.json();
+      
+      const unread = messagesData.messages?.filter(m => !m.is_read).length || 0;
+      const read = messagesData.messages?.filter(m => m.is_read).length || 0;
+      
+      setStats({
+        totalProjects: projectsData.projects?.length || 0,
+        totalSkills: skillsData.skills?.length || 0,
+        unreadMessages: unread,
+        readMessages: read
+      });
+    } catch (error) {
+      console.error('Failed to fetch stats:', error);
+    }
+  };
 
   const checkAuth = async () => {
     try {
@@ -143,15 +183,19 @@ export default function AdminDashboard() {
               <div className="admin-stats">
                 <div className="stat-card">
                   <h3>Total Projects</h3>
-                  <p className="stat-number">3</p>
+                  <p className="stat-number">{stats.totalProjects}</p>
                 </div>
                 <div className="stat-card">
-                  <h3>Profile Views</h3>
-                  <p className="stat-number">-</p>
+                  <h3>Total Skills</h3>
+                  <p className="stat-number">{stats.totalSkills}</p>
                 </div>
                 <div className="stat-card">
-                  <h3>Last Updated</h3>
-                  <p className="stat-number">Today</p>
+                  <h3>Unread Messages</h3>
+                  <p className="stat-number">{stats.unreadMessages}</p>
+                </div>
+                <div className="stat-card">
+                  <h3>Read Messages</h3>
+                  <p className="stat-number">{stats.readMessages}</p>
                 </div>
               </div>
               <div className="admin-welcome">
