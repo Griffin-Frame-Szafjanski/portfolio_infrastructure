@@ -173,7 +173,7 @@ export default function MessagesManager() {
         .no-messages {
           text-align: center;
           padding: var(--spacing-2xl);
-          color: var(--color-text-light);
+          color: #6b7280;
         }
 
         .messages-list {
@@ -184,14 +184,14 @@ export default function MessagesManager() {
 
         .message-card {
           background: white;
-          border: 2px solid var(--color-border);
+          border: 2px solid #e5e7eb;
           border-radius: var(--radius-lg);
           overflow: hidden;
           transition: var(--transition);
         }
 
         .message-card.unread {
-          border-color: var(--color-primary);
+          border-color: #667eea;
           background: #f0f4ff;
         }
 
@@ -216,41 +216,43 @@ export default function MessagesManager() {
           align-items: center;
           gap: var(--spacing-xs);
           margin-bottom: var(--spacing-xs);
+          color: #1f2937;
         }
 
         .unread-dot {
           width: 8px;
           height: 8px;
-          background: var(--color-primary);
+          background: #667eea;
           border-radius: 50%;
         }
 
         .message-email {
-          color: var(--color-text-light);
+          color: #6b7280;
           font-size: 0.875rem;
         }
 
         .message-subject {
           font-weight: 600;
           margin-bottom: var(--spacing-xs);
+          color: #1f2937;
         }
 
         .message-date {
           font-size: 0.875rem;
-          color: var(--color-text-light);
+          color: #6b7280;
         }
 
         .expand-btn {
           background: none;
           border: none;
           font-size: 1.25rem;
-          color: var(--color-text-light);
+          color: #6b7280;
           cursor: pointer;
           padding: var(--spacing-sm);
         }
 
         .message-body {
-          border-top: 1px solid var(--color-border);
+          border-top: 1px solid #e5e7eb;
           padding: var(--spacing-md);
         }
 
@@ -259,12 +261,14 @@ export default function MessagesManager() {
           padding: var(--spacing-md);
           background: white;
           border-radius: var(--radius-md);
+          color: #1f2937;
         }
 
         .message-content p {
           margin: 0;
           white-space: pre-wrap;
           line-height: 1.6;
+          color: #1f2937;
         }
 
         .message-actions {
