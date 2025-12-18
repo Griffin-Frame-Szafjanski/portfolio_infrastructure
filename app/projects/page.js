@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Header from '../components/Header';
@@ -233,7 +233,7 @@ function FilterSidebar({ skills, categories, selectedSkills, onSkillToggle, onCl
   );
 }
 
-export default function ProjectsPage() {
+function ProjectsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -357,9 +357,7 @@ export default function ProjectsPage() {
   };
 
   return (
-    <>
-      <Header />
-      <main className="py-16 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors">
+    <main className="py-16 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors">
         <div className="max-w-7xl mx-auto px-6">
           {/* Page Header */}
           <div className="text-center mb-12">
@@ -456,6 +454,27 @@ export default function ProjectsPage() {
           </div>
         </div>
       </main>
+  );
+}
+
+export default function ProjectsPage() {
+  return (
+    <>
+      <Header />
+      <Suspense fallback={
+        <main className="py-16 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="flex justify-center items-center py-20">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                <p className="text-gray-600">Loading...</p>
+              </div>
+            </div>
+          </div>
+        </main>
+      }>
+        <ProjectsContent />
+      </Suspense>
       <Footer />
     </>
   );
