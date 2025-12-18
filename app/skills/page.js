@@ -106,19 +106,19 @@ export default function SkillsPage() {
               </p>
             </div>
           ) : (
-            <div className="space-y-6">
-              {Object.entries(groupedSkills).map(([categoryId, { category, skills }]) => (
-                <div key={categoryId} className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-colors">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors">
+              {Object.entries(groupedSkills).map(([categoryId, { category, skills }], index) => (
+                <div key={categoryId} className={index > 0 ? 'mt-8' : ''}>
                   {/* Category Header - Clickable */}
                   <button
                     onClick={() => toggleCategory(categoryId)}
-                    className="w-full flex items-center justify-between p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                    className="w-full flex items-center justify-between pb-3 border-b-2 border-gray-200 dark:border-gray-700 group"
                   >
-                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white text-left">
+                    <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white text-left">
                       {category.name}
                     </h2>
                     <svg
-                      className={`w-6 h-6 text-gray-500 dark:text-gray-400 transition-transform duration-300 ${
+                      className={`w-5 h-5 text-gray-400 dark:text-gray-500 transition-transform duration-300 ${
                         expandedCategories[categoryId] ? 'rotate-180' : ''
                       }`}
                       fill="none"
@@ -131,7 +131,7 @@ export default function SkillsPage() {
 
                   {/* Skills Tags - Collapsible */}
                   {expandedCategories[categoryId] && (
-                    <div className="px-6 pb-6">
+                    <div className="mt-4">
                       <div className="flex flex-wrap gap-2">
                         {skills.map((skill) => (
                           <Link
