@@ -142,12 +142,6 @@ function FilterBar({ skills, categories, selectedCategory, selectedSkills, onCat
     return category ? category.name : 'Categories';
   };
 
-  // Calculate skills count badge
-  const getSkillsCountText = () => {
-    if (selectedSkills.length === 0) return 'All Skills';
-    return `${selectedSkills.length}/${displayedSkills.length}`;
-  };
-
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
       <div className="flex flex-wrap gap-4 items-center">
@@ -158,7 +152,7 @@ function FilterBar({ skills, categories, selectedCategory, selectedSkills, onCat
               setCategoryDropdownOpen(!categoryDropdownOpen);
               setSkillsDropdownOpen(false);
             }}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors min-w-[200px] justify-between"
+            className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors min-w-[250px] justify-between"
           >
             <div className="flex items-center gap-2">
               <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -178,7 +172,7 @@ function FilterBar({ skills, categories, selectedCategory, selectedSkills, onCat
 
           {/* Categories Dropdown Menu */}
           {categoryDropdownOpen && (
-            <div className="absolute top-full left-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-96 overflow-y-auto">
+            <div className="absolute top-full left-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-96 overflow-y-auto">
               <div className="p-2">
                 {/* All Categories Option */}
                 <label className="flex items-center gap-3 px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer transition-colors">
@@ -247,13 +241,15 @@ function FilterBar({ skills, categories, selectedCategory, selectedSkills, onCat
               setSkillsDropdownOpen(!skillsDropdownOpen);
               setCategoryDropdownOpen(false);
             }}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors min-w-[200px] justify-between"
+            className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors min-w-[250px] justify-between"
           >
             <div className="flex items-center gap-2">
               <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <span className="font-medium">{getSkillsCountText()}</span>
+              <span className="font-medium">
+                {selectedSkills.length === 0 ? 'All Skills' : `${selectedSkills.length} Selected`}
+              </span>
             </div>
             <svg 
               className={`w-5 h-5 text-gray-500 transition-transform ${skillsDropdownOpen ? 'rotate-180' : ''}`} 
@@ -267,7 +263,7 @@ function FilterBar({ skills, categories, selectedCategory, selectedSkills, onCat
 
           {/* Skills Dropdown Menu */}
           {skillsDropdownOpen && (
-            <div className="absolute top-full left-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-96 overflow-y-auto">
+            <div className="absolute top-full left-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-96 overflow-y-auto">
               <div className="p-2">
                 {displayedSkills.length > 0 ? (
                   displayedSkills.map((skill) => {
@@ -299,17 +295,20 @@ function FilterBar({ skills, categories, selectedCategory, selectedSkills, onCat
         </div>
 
         {/* Clear Filters Button */}
-        {hasActiveFilters && (
-          <button
-            onClick={onClearFilters}
-            className="px-4 py-2.5 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-medium flex items-center gap-2 ml-auto"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-            Clear Filters
-          </button>
-        )}
+        <button
+          onClick={onClearFilters}
+          className={`px-4 py-2.5 rounded-lg font-medium flex items-center gap-2 ml-auto transition-colors ${
+            hasActiveFilters
+              ? 'bg-red-600 hover:bg-red-700 text-white dark:bg-red-600 dark:hover:bg-red-700'
+              : 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+          }`}
+          disabled={!hasActiveFilters}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          Clear Filters
+        </button>
       </div>
 
       {/* Active Filters Display */}
