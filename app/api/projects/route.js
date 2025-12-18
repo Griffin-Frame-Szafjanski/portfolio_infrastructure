@@ -61,8 +61,6 @@ export async function POST(request) {
       title,
       description,
       long_description: long_description || null,
-      technologies: '', // Keep for backwards compatibility but empty
-      tech_stack: '', // Keep for backwards compatibility but empty
       project_url: project_url || null,
       github_url: github_url || null,
       image_url: image_url || null,
