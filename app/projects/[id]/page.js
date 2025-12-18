@@ -93,9 +93,9 @@ export default function ProjectDetailPage({ params }) {
             Back to Projects
           </Link>
 
-          {/* Project Header Card */}
+          {/* Project Image Card */}
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden mb-8 transition-colors">
-            <div className="h-64 overflow-hidden">
+            <div className="h-80 overflow-hidden">
               {project.image_url ? (
                 <img 
                   src={project.image_url} 
@@ -108,8 +108,11 @@ export default function ProjectDetailPage({ params }) {
                 </div>
               )}
             </div>
-            
-            <div className="p-8">
+          </div>
+
+          {/* Project Details Card */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8 transition-colors">
+            <div>
               <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-6">
                 {project.title}
               </h1>
@@ -167,6 +170,7 @@ export default function ProjectDetailPage({ params }) {
               </div>
             </div>
           </div>
+
 
           {/* Media Gallery - Multiple Videos/PDFs */}
           <ProjectMediaGallery 
