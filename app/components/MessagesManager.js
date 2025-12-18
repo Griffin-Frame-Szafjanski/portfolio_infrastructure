@@ -81,7 +81,7 @@ export default function MessagesManager() {
   return (
     <div className="messages-manager">
       <div className="messages-header">
-        <h2>Contact Messages</h2>
+        <h2 className="text-gray-900">Contact Messages</h2>
         {unreadCount > 0 && (
           <span className="unread-badge">{unreadCount} Unread</span>
         )}
@@ -159,6 +159,7 @@ export default function MessagesManager() {
 
         .messages-header h2 {
           margin: 0;
+          color: #1f2937;
         }
 
         .unread-badge {
