@@ -142,8 +142,8 @@ function FilterBar({ skills, categories, selectedCategories, selectedSkills, onC
   // Calculate selected category names for display
   const getSelectedCategoriesText = () => {
     if (selectedCategories.length === 0) return 'All Categories';
-    if (selectedCategories.length === 1) return 'Filtering by 1 category';
-    return `Filtering by ${selectedCategories.length} categories`;
+    if (selectedCategories.length === 1) return 'Filtering skills by 1 category';
+    return `Filtering skills by ${selectedCategories.length} categories`;
   };
   
   // Calculate selected skills text
@@ -301,49 +301,12 @@ function FilterBar({ skills, categories, selectedCategories, selectedSkills, onC
       </div>
 
       {/* Active Filters Display */}
-      {(selectedCategories.length > 0 || selectedSkills.length > 0) && (
+      {selectedSkills.length > 0 && (
         <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Active filters:
             </span>
-            {selectedCategories.map(categoryId => {
-              if (categoryId === 'uncategorized') {
-                return (
-                  <span
-                    key="uncategorized"
-                    className="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
-                  >
-                    Other
-                    <button
-                      onClick={() => onCategoryToggle('uncategorized')}
-                      className="hover:bg-primary/20 rounded-full p-0.5"
-                    >
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </span>
-                );
-              }
-              const category = categories.find(c => c.id === categoryId);
-              return category ? (
-                <span
-                  key={categoryId}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
-                >
-                  {category.name}
-                  <button
-                    onClick={() => onCategoryToggle(categoryId)}
-                    className="hover:bg-primary/20 rounded-full p-0.5"
-                  >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </span>
-              ) : null;
-            })}
             {selectedSkills.map(skillId => {
               const skill = skills.find(s => s.id === skillId);
               return skill ? (
