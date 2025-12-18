@@ -30,7 +30,11 @@ function ProjectCard({ project, onSkillClick }) {
   }, [project.id]);
   
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md transition-all hover:shadow-xl border border-gray-200 dark:border-gray-700 h-full flex flex-col">
+    <div className={`bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md transition-all hover:shadow-xl border-2 h-full flex flex-col ${
+      project.featured 
+        ? 'border-amber-400 dark:border-amber-500' 
+        : 'border-gray-200 dark:border-gray-700'
+    }`}>
       {/* Project Image/Icon */}
       <Link href={`/projects/${project.id}`} className="block">
         <div className="w-full h-40 rounded-xl mb-4 overflow-hidden hover:scale-105 transition-transform cursor-pointer">
@@ -59,18 +63,6 @@ function ProjectCard({ project, onSkillClick }) {
       <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3 leading-relaxed flex-grow">
         {project.description}
       </p>
-      
-      {/* Featured Badge */}
-      {project.featured && (
-        <div className="mb-4">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 text-white rounded-lg text-sm font-semibold shadow-sm">
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-            </svg>
-            Featured Project
-          </span>
-        </div>
-      )}
       
       {/* Skills Tags - Clickable */}
       <div className="flex flex-wrap gap-2 mb-4">
@@ -101,16 +93,29 @@ function ProjectCard({ project, onSkillClick }) {
         )}
       </div>
       
-      {/* View Details Button */}
-      <Link 
-        href={`/projects/${project.id}`}
-        className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center text-primary font-semibold hover:gap-2 transition-all"
-      >
-        View Details
-        <svg className="w-5 h-5 ml-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-        </svg>
-      </Link>
+      {/* Footer with Featured Badge and View Details */}
+      <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+        {/* Featured Badge */}
+        {project.featured && (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-500 text-white rounded-lg text-xs font-semibold">
+            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+            Featured
+          </span>
+        )}
+        
+        {/* View Details Button */}
+        <Link 
+          href={`/projects/${project.id}`}
+          className={`flex items-center text-primary font-semibold hover:gap-2 transition-all ${!project.featured ? 'ml-auto' : ''}`}
+        >
+          View Details
+          <svg className="w-5 h-5 ml-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </Link>
+      </div>
     </div>
   );
 }
