@@ -116,8 +116,8 @@ export default function CategoriesManager() {
   return (
     <div className="space-y-6">
       {/* Form */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
+      <div className="bg-white rounded-lg shadow p-6">
+        <h3 className="text-xl font-bold mb-4 text-gray-900">
           {editingId ? 'Edit Category' : 'Add New Category'}
         </h3>
 
@@ -135,39 +135,39 @@ export default function CategoriesManager() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+            <label className="block text-sm font-medium mb-1 text-gray-700">
               Category Name *
             </label>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+            <label className="block text-sm font-medium mb-1 text-gray-700">
               Description
             </label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               rows="2"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+            <label className="block text-sm font-medium mb-1 text-gray-700">
               Display Order
             </label>
             <input
               type="number"
               value={formData.display_order}
               onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -182,7 +182,7 @@ export default function CategoriesManager() {
               <button
                 type="button"
                 onClick={handleCancelEdit}
-                className="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-white rounded-lg hover:bg-gray-400 dark:hover:bg-gray-700"
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
               >
                 Cancel
               </button>
@@ -192,31 +192,31 @@ export default function CategoriesManager() {
       </div>
 
       {/* Categories List */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
+      <div className="bg-white rounded-lg shadow p-6">
+        <h3 className="text-xl font-bold mb-4 text-gray-900">
           Skill Categories ({categories.length})
         </h3>
 
         {categories.length === 0 ? (
-          <p className="text-gray-500 dark:text-gray-400">No categories yet. Create one above!</p>
+          <p className="text-gray-500">No categories yet. Create one above!</p>
         ) : (
           <div className="space-y-3">
             {categories.map((category) => (
               <div
                 key={category.id}
-                className="flex items-start justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                className="flex items-start justify-between p-4 bg-gray-50 rounded-lg"
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <h4 className="font-semibold text-gray-900 dark:text-white">
+                    <h4 className="font-semibold text-gray-900">
                       {category.name}
                     </h4>
-                    <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">
+                    <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
                       Order: {category.display_order}
                     </span>
                   </div>
                   {category.description && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    <p className="text-sm text-gray-600 mt-1">
                       {category.description}
                     </p>
                   )}
@@ -224,13 +224,13 @@ export default function CategoriesManager() {
                 <div className="flex gap-2 ml-4">
                   <button
                     onClick={() => handleEdit(category)}
-                    className="px-3 py-1 text-sm bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-800"
+                    className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(category.id)}
-                    className="px-3 py-1 text-sm bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded hover:bg-red-200 dark:hover:bg-red-800"
+                    className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
                   >
                     Delete
                   </button>
