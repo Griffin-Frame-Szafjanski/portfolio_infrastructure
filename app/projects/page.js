@@ -103,6 +103,22 @@ function ProjectCard({ project, onSkillClick }) {
 }
 
 function FilterBar({ skills, categories, selectedCategory, selectedSkills, onCategorySelect, onSkillToggle, onClearFilters }) {
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
+  const [skillsDropdownOpen, setSkillsDropdownOpen] = useState(false);
+  
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.dropdown-container')) {
+        setCategoryDropdownOpen(false);
+        setSkillsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+  
   // Group skills by category
   const skillsByCategory = {};
   categories.forEach(category => {
@@ -111,106 +127,190 @@ function FilterBar({ skills, categories, selectedCategory, selectedSkills, onCat
   
   const uncategorized = skills.filter(skill => !skill.category_id && skill.project_count > 0);
   
+  // Get skills filtered by selected categories
   const displayedSkills = selectedCategory 
     ? (selectedCategory === 'uncategorized' ? uncategorized : skillsByCategory[selectedCategory] || [])
     : skills.filter(s => s.project_count > 0);
 
   const hasActiveFilters = selectedCategory || selectedSkills.length > 0;
 
+  // Calculate selected category names for display
+  const getSelectedCategoriesText = () => {
+    if (!selectedCategory) return 'All Categories';
+    if (selectedCategory === 'uncategorized') return 'Other';
+    const category = categories.find(c => c.id === selectedCategory);
+    return category ? category.name : 'Categories';
+  };
+
+  // Calculate skills count badge
+  const getSkillsCountText = () => {
+    if (selectedSkills.length === 0) return 'All Skills';
+    return `${selectedSkills.length}/${displayedSkills.length}`;
+  };
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
-      {/* Header with Clear Button */}
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
-          Filter Projects
-        </h3>
+      <div className="flex flex-wrap gap-4 items-center">
+        {/* Categories Dropdown */}
+        <div className="relative dropdown-container">
+          <button
+            onClick={() => {
+              setCategoryDropdownOpen(!categoryDropdownOpen);
+              setSkillsDropdownOpen(false);
+            }}
+            className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors min-w-[200px] justify-between"
+          >
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+              </svg>
+              <span className="font-medium">{getSelectedCategoriesText()}</span>
+            </div>
+            <svg 
+              className={`w-5 h-5 text-gray-500 transition-transform ${categoryDropdownOpen ? 'rotate-180' : ''}`} 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {/* Categories Dropdown Menu */}
+          {categoryDropdownOpen && (
+            <div className="absolute top-full left-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-96 overflow-y-auto">
+              <div className="p-2">
+                {/* All Categories Option */}
+                <label className="flex items-center gap-3 px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer transition-colors">
+                  <input
+                    type="radio"
+                    checked={!selectedCategory}
+                    onChange={() => {
+                      onCategorySelect(null);
+                      setCategoryDropdownOpen(false);
+                    }}
+                    className="w-4 h-4 text-primary focus:ring-primary"
+                  />
+                  <span className="text-gray-900 dark:text-gray-100 font-medium">All Categories</span>
+                </label>
+
+                {/* Category Options */}
+                {categories.map((category) => {
+                  const count = skillsByCategory[category.id]?.length || 0;
+                  if (count === 0) return null;
+                  
+                  return (
+                    <label
+                      key={category.id}
+                      className="flex items-center gap-3 px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer transition-colors"
+                    >
+                      <input
+                        type="radio"
+                        checked={selectedCategory === category.id}
+                        onChange={() => {
+                          onCategorySelect(category.id);
+                          setCategoryDropdownOpen(false);
+                        }}
+                        className="w-4 h-4 text-primary focus:ring-primary"
+                      />
+                      <span className="text-gray-900 dark:text-gray-100 flex-grow">{category.name}</span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">{count}</span>
+                    </label>
+                  );
+                })}
+
+                {/* Uncategorized Option */}
+                {uncategorized.length > 0 && (
+                  <label className="flex items-center gap-3 px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer transition-colors">
+                    <input
+                      type="radio"
+                      checked={selectedCategory === 'uncategorized'}
+                      onChange={() => {
+                        onCategorySelect('uncategorized');
+                        setCategoryDropdownOpen(false);
+                      }}
+                      className="w-4 h-4 text-primary focus:ring-primary"
+                    />
+                    <span className="text-gray-900 dark:text-gray-100 flex-grow">Other</span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">{uncategorized.length}</span>
+                  </label>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Skills Dropdown */}
+        <div className="relative dropdown-container">
+          <button
+            onClick={() => {
+              setSkillsDropdownOpen(!skillsDropdownOpen);
+              setCategoryDropdownOpen(false);
+            }}
+            className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors min-w-[200px] justify-between"
+          >
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <span className="font-medium">{getSkillsCountText()}</span>
+            </div>
+            <svg 
+              className={`w-5 h-5 text-gray-500 transition-transform ${skillsDropdownOpen ? 'rotate-180' : ''}`} 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {/* Skills Dropdown Menu */}
+          {skillsDropdownOpen && (
+            <div className="absolute top-full left-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-96 overflow-y-auto">
+              <div className="p-2">
+                {displayedSkills.length > 0 ? (
+                  displayedSkills.map((skill) => {
+                    const isSelected = selectedSkills.includes(skill.id);
+                    return (
+                      <label
+                        key={skill.id}
+                        className="flex items-center gap-3 px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer transition-colors"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => onSkillToggle(skill.id)}
+                          className="w-4 h-4 text-primary focus:ring-primary rounded"
+                        />
+                        <span className="text-gray-900 dark:text-gray-100 flex-grow">{skill.name}</span>
+                        <span className="text-sm text-gray-500 dark:text-gray-400">{skill.project_count}</span>
+                      </label>
+                    );
+                  })
+                ) : (
+                  <div className="px-3 py-6 text-center text-gray-500 dark:text-gray-400">
+                    No skills available
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Clear Filters Button */}
         {hasActiveFilters && (
           <button
             onClick={onClearFilters}
-            className="text-sm text-red-600 hover:text-red-700 font-medium flex items-center gap-1"
+            className="px-4 py-2.5 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-medium flex items-center gap-2 ml-auto"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
-            Clear All Filters
+            Clear Filters
           </button>
         )}
       </div>
-
-      {/* Category Pills */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Filter by Category:
-        </label>
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => onCategorySelect(null)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              !selectedCategory
-                ? 'bg-primary text-white'
-                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-            }`}
-          >
-            All Categories
-          </button>
-          {categories.map((category) => {
-            const count = skillsByCategory[category.id]?.length || 0;
-            if (count === 0) return null;
-            return (
-              <button
-                key={category.id}
-                onClick={() => onCategorySelect(category.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  selectedCategory === category.id
-                    ? 'bg-primary text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                }`}
-              >
-                {category.name} ({count})
-              </button>
-            );
-          })}
-          {uncategorized.length > 0 && (
-            <button
-              onClick={() => onCategorySelect('uncategorized')}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                selectedCategory === 'uncategorized'
-                  ? 'bg-primary text-white'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-              }`}
-            >
-              Other ({uncategorized.length})
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Skills Pills */}
-      {displayedSkills.length > 0 && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Filter by Skill:
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {displayedSkills.map((skill) => {
-              const isSelected = selectedSkills.includes(skill.id);
-              return (
-                <button
-                  key={skill.id}
-                  onClick={() => onSkillToggle(skill.id)}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                    isSelected
-                      ? 'bg-primary text-white ring-2 ring-primary ring-offset-2'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                  }`}
-                >
-                  {skill.name} ({skill.project_count})
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
 
       {/* Active Filters Display */}
       {selectedSkills.length > 0 && (
