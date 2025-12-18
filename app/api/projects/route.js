@@ -1,11 +1,27 @@
 import { NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/auth';
-import { getProjectsWithSkillCount, createProject, setProjectSkills } from '@/lib/db';
+import { getProjectsWithSkillCount, getProjectsBySkills, createProject, setProjectSkills } from '@/lib/db';
 
-export async function GET() {
+export async function GET(request) {
   try {
-    // Get projects from database with skill count
-    const projects = await getProjectsWithSkillCount();
+    const { searchParams } = new URL(request.url);
+    const skillIdsParam = searchParams.get('skills');
+    
+    let projects;
+    
+    if (skillIdsParam) {
+      // Parse skill IDs from query string (comma-separated)
+      const skillIds = skillIdsParam.split(',').map(id => parseInt(id)).filter(id => !isNaN(id));
+      
+      if (skillIds.length > 0) {
+        projects = await getProjectsBySkills(skillIds);
+      } else {
+        projects = await getProjectsWithSkillCount();
+      }
+    } else {
+      // Get all projects with skill count
+      projects = await getProjectsWithSkillCount();
+    }
     
     return NextResponse.json({
       success: true,
