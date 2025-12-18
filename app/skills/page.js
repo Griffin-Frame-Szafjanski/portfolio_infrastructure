@@ -54,7 +54,7 @@ export default function SkillsPage() {
     const uncategorized = skills.filter(skill => !skill.category_id);
     if (uncategorized.length > 0) {
       grouped['uncategorized'] = {
-        category: { id: null, name: 'Other Skills', description: null },
+        category: { id: null, name: 'Unclassified Tags', description: null },
         skills: uncategorized
       };
     }
