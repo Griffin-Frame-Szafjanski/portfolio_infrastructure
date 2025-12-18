@@ -129,23 +129,17 @@ export default function SkillsPage() {
                     </svg>
                   </button>
 
-                  {/* Skills Grid - Collapsible */}
+                  {/* Skills Tags - Collapsible */}
                   {expandedCategories[categoryId] && (
                     <div className="px-6 pb-6">
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                      <div className="flex flex-wrap gap-2">
                         {skills.map((skill) => (
                           <Link
                             key={skill.id}
                             href={`/projects?skills=${skill.id}`}
-                            className="group"
+                            className="inline-block px-3 py-1 bg-gray-100 dark:bg-gray-700 text-primary rounded-full text-sm font-medium hover:bg-primary hover:text-white transition-colors"
                           >
-                            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-500 h-full flex items-center justify-center">
-                              <div className="text-center">
-                                <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                                  {skill.name}
-                                </h3>
-                              </div>
-                            </div>
+                            {skill.name}
                           </Link>
                         ))}
                       </div>
