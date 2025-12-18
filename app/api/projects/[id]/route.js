@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/auth';
-import { updateProject, deleteProject } from '@/lib/db';
+import { updateProject, deleteProject, setProjectSkills } from '@/lib/db';
 
 // PUT - Update a project
 export async function PUT(request, { params }) {
@@ -22,7 +22,7 @@ export async function PUT(request, { params }) {
       title,
       description,
       long_description,
-      technologies,
+      skill_ids,
       project_url,
       github_url,
       image_url,
@@ -35,8 +35,8 @@ export async function PUT(request, { params }) {
       title,
       description,
       long_description: long_description || null,
-      technologies: technologies || '',
-      tech_stack: technologies || '',
+      technologies: '', // Keep for backwards compatibility but empty
+      tech_stack: '', // Keep for backwards compatibility but empty
       project_url: project_url || null,
       github_url: github_url || null,
       image_url: image_url || null,
@@ -49,6 +49,11 @@ export async function PUT(request, { params }) {
         { success: false, error: 'Project not found' },
         { status: 404 }
       );
+    }
+
+    // Update project skills
+    if (skill_ids !== undefined && Array.isArray(skill_ids)) {
+      await setProjectSkills(id, skill_ids);
     }
 
     return NextResponse.json({

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import ProjectMediaManager from './ProjectMediaManager';
+import SkillSelector from './SkillSelector';
 
 export default function ProjectsManager() {
   const [mediaManagerProjectId, setMediaManagerProjectId] = useState(null);
@@ -15,7 +16,7 @@ export default function ProjectsManager() {
     title: '',
     description: '',
     long_description: '',
-    technologies: '',
+    skill_ids: [],
     project_url: '',
     github_url: '',
     image_url: '',
@@ -49,7 +50,7 @@ export default function ProjectsManager() {
       title: '',
       description: '',
       long_description: '',
-      technologies: '',
+      skill_ids: [],
       project_url: '',
       github_url: '',
       image_url: '',
@@ -60,13 +61,26 @@ export default function ProjectsManager() {
     setShowForm(false);
   };
 
-  const handleEdit = (project) => {
+  const handleEdit = async (project) => {
     setEditingProject(project);
+    
+    // Fetch project skills
+    let skillIds = [];
+    try {
+      const response = await fetch(`/api/projects/${project.id}/skills`);
+      if (response.ok) {
+        const data = await response.json();
+        skillIds = data.skills?.map(s => s.id) || [];
+      }
+    } catch (error) {
+      console.error('Error fetching project skills:', error);
+    }
+    
     setFormData({
       title: project.title || '',
       description: project.description || '',
       long_description: project.long_description || '',
-      technologies: project.technologies || project.tech_stack || '',
+      skill_ids: skillIds,
       project_url: project.project_url || '',
       github_url: project.github_url || '',
       image_url: project.image_url || '',
@@ -233,7 +247,11 @@ export default function ProjectsManager() {
                     <h4>{project.title}</h4>
                     <p>{project.description}</p>
                     <div className="project-meta">
-                      <span className="tech-badge">{project.technologies || project.tech_stack}</span>
+                      {project.skill_count > 0 && (
+                        <span className="tech-badge">
+                          {project.skill_count} skill{project.skill_count !== 1 ? 's' : ''}
+                        </span>
+                      )}
                       {project.featured && <span className="featured-badge">⭐ Featured</span>}
                     </div>
                   </div>
@@ -320,16 +338,14 @@ export default function ProjectsManager() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="technologies">Technologies Used</label>
-                <input
-                  type="text"
-                  id="technologies"
-                  name="technologies"
-                  value={formData.technologies}
-                  onChange={handleChange}
-                  className="form-input"
-                  placeholder="e.g., React, Node.js, PostgreSQL"
+                <label htmlFor="skills">Skills & Technologies *</label>
+                <SkillSelector
+                  selectedSkillIds={formData.skill_ids}
+                  onChange={(skillIds) => setFormData(prev => ({ ...prev, skill_ids: skillIds }))}
                 />
+                <small className="form-help">
+                  Select existing skills or create new ones on-the-fly
+                </small>
               </div>
             </div>
 

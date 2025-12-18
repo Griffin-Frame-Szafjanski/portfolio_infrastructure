@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/auth';
-import { getProjects, createProject } from '@/lib/db';
+import { getProjectsWithSkillCount, createProject, setProjectSkills } from '@/lib/db';
 
 export async function GET() {
   try {
-    // Get projects from database
-    const projects = await getProjects();
+    // Get projects from database with skill count
+    const projects = await getProjectsWithSkillCount();
     
     return NextResponse.json({
       success: true,
@@ -40,7 +40,7 @@ export async function POST(request) {
       title,
       description,
       long_description,
-      technologies,
+      skill_ids,
       project_url,
       github_url,
       image_url,
@@ -61,14 +61,19 @@ export async function POST(request) {
       title,
       description,
       long_description: long_description || null,
-      technologies: technologies || '',
-      tech_stack: technologies || '',
+      technologies: '', // Keep for backwards compatibility but empty
+      tech_stack: '', // Keep for backwards compatibility but empty
       project_url: project_url || null,
       github_url: github_url || null,
       image_url: image_url || null,
       display_order: display_order || 0,
       featured: featured || false
     });
+
+    // Set project skills
+    if (skill_ids && Array.isArray(skill_ids) && skill_ids.length > 0) {
+      await setProjectSkills(newProject.id, skill_ids);
+    }
 
     return NextResponse.json({
       success: true,

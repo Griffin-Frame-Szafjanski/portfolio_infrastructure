@@ -10,7 +10,9 @@ import ProjectMediaGallery from '../../components/ProjectMediaGallery';
 export default function ProjectDetailPage({ params }) {
   const resolvedParams = use(params);
   const [project, setProject] = useState(null);
+  const [skills, setSkills] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingSkills, setLoadingSkills] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -23,6 +25,19 @@ export default function ProjectDetailPage({ params }) {
           const foundProject = result.data.find(p => p.id === parseInt(resolvedParams.id));
           if (foundProject) {
             setProject(foundProject);
+            
+            // Fetch project skills
+            try {
+              const skillsResponse = await fetch(`/api/projects/${foundProject.id}/skills`);
+              if (skillsResponse.ok) {
+                const skillsData = await skillsResponse.json();
+                setSkills(skillsData.skills || []);
+              }
+            } catch (skillsErr) {
+              console.error('Error loading skills:', skillsErr);
+            } finally {
+              setLoadingSkills(false);
+            }
           } else {
             setError('Project not found');
           }
@@ -74,7 +89,6 @@ export default function ProjectDetailPage({ params }) {
     );
   }
 
-  const techTags = project.tech_stack ? project.tech_stack.split(',').map(tech => tech.trim()) : [];
   const initial = project.title ? project.title.charAt(0).toUpperCase() : '?';
 
   return (
@@ -117,16 +131,27 @@ export default function ProjectDetailPage({ params }) {
                 {project.title}
               </h1>
 
-              {/* Technology Tags */}
-              <div className="flex flex-wrap gap-2 mb-6">
-                {techTags.map((tech, index) => (
-                  <span 
-                    key={index} 
-                    className="inline-block px-4 py-2 bg-primary/10 dark:bg-primary/20 text-primary rounded-lg text-sm font-medium"
-                  >
-                    {tech}
-                  </span>
-                ))}
+              {/* Skills & Technologies */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                  Skills & Technologies
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {loadingSkills ? (
+                    <span className="text-sm text-gray-400 dark:text-gray-500">Loading skills...</span>
+                  ) : skills.length > 0 ? (
+                    skills.map((skill) => (
+                      <span 
+                        key={skill.id} 
+                        className="inline-block px-4 py-2 bg-primary/10 dark:bg-primary/20 text-primary rounded-lg text-sm font-medium"
+                      >
+                        {skill.name}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-sm text-gray-400 dark:text-gray-500">No skills tagged for this project</span>
+                  )}
+                </div>
               </div>
 
               {/* Long Description */}

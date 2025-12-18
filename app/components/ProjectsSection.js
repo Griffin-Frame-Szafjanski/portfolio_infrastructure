@@ -4,8 +4,26 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 function ProjectCard({ project }) {
+  const [skills, setSkills] = useState([]);
+  const [loadingSkills, setLoadingSkills] = useState(true);
   const initial = project.title ? project.title.charAt(0).toUpperCase() : '?';
-  const techTags = project.tech_stack ? project.tech_stack.split(',').map(tech => tech.trim()) : [];
+  
+  useEffect(() => {
+    async function fetchSkills() {
+      try {
+        const response = await fetch(`/api/projects/${project.id}/skills`);
+        if (response.ok) {
+          const data = await response.json();
+          setSkills(data.skills || []);
+        }
+      } catch (error) {
+        console.error('Error fetching project skills:', error);
+      } finally {
+        setLoadingSkills(false);
+      }
+    }
+    fetchSkills();
+  }, [project.id]);
   
   return (
     <div className="bg-white rounded-2xl p-8 shadow-md transition-all hover:-translate-y-1 hover:shadow-xl border border-gray-200">
@@ -27,9 +45,17 @@ function ProjectCard({ project }) {
       </Link>
       <p className="text-gray-600 mb-6 leading-relaxed">{project.description}</p>
       <div className="flex flex-wrap gap-2 mb-6">
-        {techTags.map((tech, index) => (
-          <span key={index} className="inline-block px-3 py-1 bg-gray-100 text-primary rounded text-sm font-medium">{tech}</span>
-        ))}
+        {loadingSkills ? (
+          <span className="text-sm text-gray-400">Loading skills...</span>
+        ) : skills.length > 0 ? (
+          skills.map((skill) => (
+            <span key={skill.id} className="inline-block px-3 py-1 bg-gray-100 text-primary rounded text-sm font-medium">
+              {skill.name}
+            </span>
+          ))
+        ) : (
+          <span className="text-sm text-gray-400">No skills tagged</span>
+        )}
         {project.demo_type && project.demo_type !== 'none' && (
           <span className="inline-block px-3 py-1 bg-green-500 text-white rounded text-sm font-medium">
             🎬 {project.demo_type.toUpperCase()} Demo
