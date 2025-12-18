@@ -6,6 +6,8 @@ import BiographyEditor from '@/app/components/BiographyEditor';
 import ProjectsManager from '@/app/components/ProjectsManager';
 import MessagesManager from '@/app/components/MessagesManager';
 import ChangePasswordForm from '@/app/components/ChangePasswordForm';
+import CategoriesManager from '@/app/components/CategoriesManager';
+import SkillsManager from '@/app/components/SkillsManager';
 
 export default function AdminDashboard() {
   const [user, setUser] = useState(null);
@@ -104,6 +106,24 @@ export default function AdminDashboard() {
               Projects
             </button>
             <button
+              className={`admin-nav-item ${activeTab === 'skills' ? 'active' : ''}`}
+              onClick={() => setActiveTab('skills')}
+            >
+              <svg className="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Skills
+            </button>
+            <button
+              className={`admin-nav-item ${activeTab === 'categories' ? 'active' : ''}`}
+              onClick={() => setActiveTab('categories')}
+            >
+              <svg className="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+              </svg>
+              Categories
+            </button>
+            <button
               className={`admin-nav-item ${activeTab === 'messages' ? 'active' : ''}`}
               onClick={() => setActiveTab('messages')}
             >
@@ -175,6 +195,22 @@ export default function AdminDashboard() {
               <h2>Contact Messages</h2>
               <p>View and manage messages from the contact form.</p>
               <MessagesManager />
+            </div>
+          )}
+
+          {activeTab === 'skills' && (
+            <div className="admin-section">
+              <h2>Skills Management</h2>
+              <p>Add, edit, or remove skills and assign them to categories.</p>
+              <SkillsManager />
+            </div>
+          )}
+
+          {activeTab === 'categories' && (
+            <div className="admin-section">
+              <h2>Categories Management</h2>
+              <p>Manage skill categories to organize your technologies and tools.</p>
+              <CategoriesManager />
             </div>
           )}
         </main>
