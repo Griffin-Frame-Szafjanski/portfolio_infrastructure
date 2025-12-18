@@ -1,16 +1,12 @@
 import { NextResponse } from 'next/server';
-import { query } from '@/lib/db';
+import { getSkillCategories, createSkillCategory } from '@/lib/db';
 import { verifyAuth } from '@/lib/auth';
 
 // GET all skill categories
 export async function GET(request) {
   try {
-    const result = await query(
-      'SELECT * FROM skill_categories ORDER BY display_order, name',
-      []
-    );
-    
-    return NextResponse.json(result.rows);
+    const categories = await getSkillCategories();
+    return NextResponse.json(categories);
   } catch (error) {
     console.error('Error fetching skill categories:', error);
     return NextResponse.json(
@@ -38,19 +34,13 @@ export async function POST(request) {
       );
     }
 
-    const result = await query(
-      `INSERT INTO skill_categories (name, description, display_order, updated_at)
-       VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
-       RETURNING *`,
-      [name, description || null, display_order || 0]
-    );
-
-    return NextResponse.json(result.rows[0], { status: 201 });
+    const category = await createSkillCategory({ name, description, display_order });
+    return NextResponse.json(category, { status: 201 });
   } catch (error) {
     console.error('Error creating skill category:', error);
     
     // Handle unique constraint violation
-    if (error.code === '23505') {
+    if (error.message?.includes('duplicate') || error.message?.includes('unique')) {
       return NextResponse.json(
         { error: 'A category with this name already exists' },
         { status: 409 }

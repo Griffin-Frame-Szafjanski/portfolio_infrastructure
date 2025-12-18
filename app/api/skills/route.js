@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { query } from '@/lib/db';
+import { getSkills, createSkill } from '@/lib/db';
 import { verifyAuth } from '@/lib/auth';
 
 // GET all skills with optional category filter
@@ -8,24 +8,8 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const categoryId = searchParams.get('category');
 
-    let sql = `
-      SELECT s.*, sc.name as category_name
-      FROM skills s
-      LEFT JOIN skill_categories sc ON s.category_id = sc.id
-    `;
-    
-    const params = [];
-    
-    if (categoryId) {
-      sql += ' WHERE s.category_id = $1';
-      params.push(categoryId);
-    }
-    
-    sql += ' ORDER BY s.display_order, s.name';
-
-    const result = await query(sql, params);
-    
-    return NextResponse.json(result.rows);
+    const skills = await getSkills(categoryId);
+    return NextResponse.json(skills);
   } catch (error) {
     console.error('Error fetching skills:', error);
     return NextResponse.json(
@@ -53,19 +37,13 @@ export async function POST(request) {
       );
     }
 
-    const result = await query(
-      `INSERT INTO skills (name, category_id, description, display_order, updated_at)
-       VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
-       RETURNING *`,
-      [name, category_id || null, description || null, display_order || 0]
-    );
-
-    return NextResponse.json(result.rows[0], { status: 201 });
+    const skill = await createSkill({ name, category_id, description, display_order });
+    return NextResponse.json(skill, { status: 201 });
   } catch (error) {
     console.error('Error creating skill:', error);
     
     // Handle unique constraint violation
-    if (error.code === '23505') {
+    if (error.message?.includes('duplicate') || error.message?.includes('unique')) {
       return NextResponse.json(
         { error: 'A skill with this name already exists' },
         { status: 409 }
