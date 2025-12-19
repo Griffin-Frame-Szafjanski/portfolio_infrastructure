@@ -280,29 +280,29 @@ export default function CategoriesManager() {
                 key={category.id}
                 className="flex items-start justify-between p-4 bg-gray-50 rounded-lg"
               >
-                <div className="flex gap-3 items-start flex-1">
-                  <div className="flex flex-col gap-1">
-                    <button
-                      onClick={() => moveCategory(index, 'up')}
-                      disabled={index === 0}
-                      className="p-1 bg-white border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
-                      title="Move up"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" />
-                      </svg>
-                    </button>
-                    <button
-                      onClick={() => moveCategory(index, 'down')}
-                      disabled={index === categories.length - 1}
-                      className="p-1 bg-white border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
-                      title="Move down"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-                  </div>
+                        <div className="flex gap-3 items-center flex-1">
+                          <div className="flex flex-row gap-1">
+                            <button
+                              onClick={() => moveCategory(category, 'up')}
+                              disabled={index === 0}
+                              className="p-1 bg-white border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
+                              title="Move up"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" />
+                              </svg>
+                            </button>
+                            <button
+                              onClick={() => moveCategory(category, 'down')}
+                              disabled={index === categories.length - 1}
+                              className="p-1 bg-white border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
+                              title="Move down"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                              </svg>
+                            </button>
+                          </div>
                   <div className="flex-1">
                     <h4 className="font-semibold text-gray-900">
                       {category.name}

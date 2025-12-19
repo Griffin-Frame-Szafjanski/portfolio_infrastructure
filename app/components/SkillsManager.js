@@ -387,8 +387,8 @@ export default function SkillsManager() {
                         key={skill.id}
                         className="flex items-start justify-between p-3 bg-gray-50 rounded-lg"
                       >
-                        <div className="flex gap-3 items-start flex-1">
-                          <div className="flex flex-col gap-1">
+                        <div className="flex gap-3 items-center flex-1">
+                          <div className="flex flex-row gap-1">
                             <button
                               onClick={() => moveSkill(skill, 'up', categorySkills)}
                               disabled={indexInCategory === 0}
