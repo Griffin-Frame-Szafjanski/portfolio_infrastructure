@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { requireAuth, hashPassword } from '@/lib/auth';
 import { rateLimit } from '@/lib/rate-limiter';
+import { logPasswordChange } from '@/lib/audit-logger';
 import bcrypt from 'bcryptjs';
 
 export async function POST(request) {
@@ -60,6 +61,9 @@ export async function POST(request) {
 
     // Generate new password hash
     const newPasswordHash = await hashPassword(newPassword);
+
+    // Log password change
+    await logPasswordChange(user, request);
 
     // Return the new hash that needs to be set in environment variables
     return NextResponse.json({

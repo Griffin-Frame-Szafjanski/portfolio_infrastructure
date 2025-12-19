@@ -1,10 +1,19 @@
 import { NextResponse } from 'next/server';
-import { clearAuthCookie } from '@/lib/auth';
+import { clearAuthCookie, getAuthUser } from '@/lib/auth';
+import { logLogout } from '@/lib/audit-logger';
 
-export async function POST() {
+export async function POST(request) {
   try {
+    // Get user before clearing cookie
+    const user = await getAuthUser();
+    
     // Clear the authentication cookie
     await clearAuthCookie();
+
+    // Log logout if user was authenticated
+    if (user) {
+      await logLogout(user, request);
+    }
 
     return NextResponse.json({
       success: true,

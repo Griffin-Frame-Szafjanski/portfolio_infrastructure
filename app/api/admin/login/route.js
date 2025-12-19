@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { generateToken, setAuthCookie } from '@/lib/auth';
 import { rateLimit } from '@/lib/rate-limiter';
+import { logLoginAttempt } from '@/lib/audit-logger';
 import bcrypt from 'bcryptjs';
 
 export async function POST(request) {
@@ -35,6 +36,9 @@ export async function POST(request) {
 
     // Check username
     if (username !== ADMIN_USERNAME) {
+      // Log failed login attempt
+      await logLoginAttempt({ username, success: false, errorMessage: 'Invalid username' }, request);
+      
       return NextResponse.json(
         { success: false, error: 'Invalid credentials' },
         { status: 401 }
@@ -45,6 +49,9 @@ export async function POST(request) {
     const isValid = await bcrypt.compare(password, ADMIN_PASSWORD);
 
     if (!isValid) {
+      // Log failed login attempt
+      await logLoginAttempt({ username, success: false, errorMessage: 'Invalid password' }, request);
+      
       return NextResponse.json(
         { success: false, error: 'Invalid credentials' },
         { status: 401 }
@@ -60,6 +67,9 @@ export async function POST(request) {
 
     // Set secure HttpOnly cookie
     await setAuthCookie(token);
+
+    // Log successful login
+    await logLoginAttempt({ username: ADMIN_USERNAME, success: true }, request);
 
     // Return success with rate limit headers
     return NextResponse.json(
