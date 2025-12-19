@@ -7,6 +7,31 @@ const nextConfig = {
   
   // Enable React strict mode
   reactStrictMode: true,
+  
+  // Security headers (additional to middleware)
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on'
+          },
+          {
+            key: 'X-Download-Options',
+            value: 'noopen'
+          },
+        ],
+      },
+    ];
+  },
+  
+  // Compress responses
+  compress: true,
+  
+  // Power header off
+  poweredByHeader: false,
 }
 
 module.exports = nextConfig
