@@ -1,9 +1,16 @@
 import { NextResponse } from 'next/server';
-import { hashPassword, verifyPassword, requireAuth } from '@/lib/auth';
+import { requireAuth, hashPassword } from '@/lib/auth';
+import { rateLimit } from '@/lib/rate-limiter';
 import bcrypt from 'bcryptjs';
 
 export async function POST(request) {
   try {
+    // Apply rate limiting
+    const rateLimitResult = rateLimit(request, 'PASSWORD_CHANGE');
+    if (!rateLimitResult.success) {
+      return rateLimitResult.response;
+    }
+
     // Check authentication
     const user = await requireAuth();
     if (!user) {

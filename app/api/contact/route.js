@@ -1,9 +1,16 @@
 import { NextResponse } from 'next/server';
 import { createMessage } from '@/lib/db';
+import { rateLimit } from '@/lib/rate-limiter';
 
 // POST - Submit contact form
 export async function POST(request) {
   try {
+    // Apply rate limiting
+    const rateLimitResult = rateLimit(request, 'CONTACT');
+    if (!rateLimitResult.success) {
+      return rateLimitResult.response;
+    }
+
     const body = await request.json();
     const { name, email, subject, message } = body;
 
@@ -32,14 +39,20 @@ export async function POST(request) {
       message
     });
 
-    return NextResponse.json({
-      success: true,
-      message: 'Message sent successfully! We\'ll get back to you soon.',
-      data: {
-        id: newMessage.id,
-        created_at: newMessage.created_at
+    return NextResponse.json(
+      {
+        success: true,
+        message: 'Message sent successfully! We\'ll get back to you soon.',
+        data: {
+          id: newMessage.id,
+          created_at: newMessage.created_at
+        }
+      },
+      { 
+        status: 201,
+        headers: rateLimitResult.headers,
       }
-    }, { status: 201 });
+    );
 
   } catch (error) {
     console.error('Contact form error:', error);

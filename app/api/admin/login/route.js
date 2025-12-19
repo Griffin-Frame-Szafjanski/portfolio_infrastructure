@@ -1,11 +1,16 @@
 import { NextResponse } from 'next/server';
-import { hashPassword } from '@/lib/auth';
+import { generateToken, setAuthCookie } from '@/lib/auth';
+import { rateLimit } from '@/lib/rate-limiter';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import { cookies } from 'next/headers';
 
 export async function POST(request) {
   try {
+    // Apply rate limiting
+    const rateLimitResult = rateLimit(request, 'LOGIN');
+    if (!rateLimitResult.success) {
+      return rateLimitResult.response;
+    }
+
     const { username, password } = await request.json();
 
     // Validate input
@@ -46,38 +51,31 @@ export async function POST(request) {
       );
     }
 
-    // Generate JWT token
-    const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-    const token = jwt.sign(
-      {
-        id: 1,
-        username: ADMIN_USERNAME,
-        email: 'admin@example.com',
-      },
-      JWT_SECRET,
-      { expiresIn: '24h' }
-    );
+    // Generate JWT token using auth utility
+    const token = generateToken({
+      id: 1,
+      username: ADMIN_USERNAME,
+      email: 'admin@example.com',
+    });
 
     // Set secure HttpOnly cookie
-    const cookieStore = await cookies();
-    cookieStore.set('admin_token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24, // 24 hours
-      path: '/',
-    });
+    await setAuthCookie(token);
 
-    // Return success
-    return NextResponse.json({
-      success: true,
-      user: {
-        id: 1,
-        username: ADMIN_USERNAME,
-        email: 'admin@example.com',
+    // Return success with rate limit headers
+    return NextResponse.json(
+      {
+        success: true,
+        user: {
+          id: 1,
+          username: ADMIN_USERNAME,
+          email: 'admin@example.com',
+        },
+        message: 'Login successful',
       },
-      message: 'Login successful',
-    });
+      {
+        headers: rateLimitResult.headers,
+      }
+    );
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json(
