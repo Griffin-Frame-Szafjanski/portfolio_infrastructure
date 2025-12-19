@@ -11,8 +11,7 @@ export default function SkillsManager() {
   const [savingOrder, setSavingOrder] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    category_id: '',
-    description: ''
+    category_id: ''
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -166,7 +165,7 @@ export default function SkillsManager() {
 
       if (response.ok) {
         setSuccess(editingId ? 'Skill updated successfully!' : 'Skill created successfully!');
-        setFormData({ name: '', category_id: '', description: '' });
+        setFormData({ name: '', category_id: '' });
         setEditingId(null);
         fetchSkills();
         setTimeout(() => setSuccess(''), 3000);
@@ -189,8 +188,7 @@ export default function SkillsManager() {
     setEditingId(skill.id);
     setFormData({
       name: skill.name,
-      category_id: skill.category_id || '',
-      description: skill.description || ''
+      category_id: skill.category_id || ''
     });
     setError('');
     setSuccess('');
@@ -198,7 +196,7 @@ export default function SkillsManager() {
 
   const handleCancelEdit = () => {
     setEditingId(null);
-    setFormData({ name: '', category_id: '', description: '' });
+    setFormData({ name: '', category_id: '' });
     setError('');
   };
 
@@ -309,22 +307,6 @@ export default function SkillsManager() {
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700">
-              Description
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
-              rows="2"
-              disabled={hasOrderChanges}
-            />
-            <small className="text-gray-500 text-sm mt-1 block">
-              Skills are ordered within their category. Use the arrows below to change priority.
-            </small>
-          </div>
-
           <div className="flex gap-2">
             <button
               type="submit"
@@ -432,11 +414,6 @@ export default function SkillsManager() {
                             <h5 className="font-medium text-gray-900">
                               {skill.name}
                             </h5>
-                            {skill.description && (
-                              <p className="text-sm text-gray-600 mt-1">
-                                {skill.description}
-                              </p>
-                            )}
                           </div>
                         </div>
                         <div className="flex gap-2 ml-4">

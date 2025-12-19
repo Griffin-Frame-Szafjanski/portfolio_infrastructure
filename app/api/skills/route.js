@@ -29,7 +29,7 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { name, category_id, description, display_order } = body;
+    const { name, category_id, display_order } = body;
 
     if (!name) {
       return NextResponse.json(
@@ -38,7 +38,7 @@ export async function POST(request) {
       );
     }
 
-    const skill = await createSkill({ name, category_id, description, display_order });
+    const skill = await createSkill({ name, category_id, display_order });
     
     // Log the creation
     await logResourceCreation({

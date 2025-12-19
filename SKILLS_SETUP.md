@@ -86,7 +86,6 @@ npm run dev
 - ✅ Edit existing skills
 - ✅ Delete skills
 - ✅ Set skill display order
-- ✅ Add skill descriptions
 - ✅ Filter skills by category
 - ✅ View skills grouped by category
 
@@ -254,7 +253,6 @@ curl http://localhost:3000/api/skills?category=1
 - `id` - Primary key
 - `name` - Skill name (unique)
 - `category_id` - Foreign key to skill_categories (nullable)
-- `description` - Optional description
 - `display_order` - Sort order (default: 0)
 - `created_at` - Timestamp
 - `updated_at` - Timestamp

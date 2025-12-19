@@ -36,7 +36,7 @@ export async function PUT(request, { params }) {
 
     const { id } = params;
     const body = await request.json();
-    const { name, category_id, description, display_order } = body;
+    const { name, category_id, display_order } = body;
 
     if (!name) {
       return NextResponse.json(
@@ -45,7 +45,7 @@ export async function PUT(request, { params }) {
       );
     }
 
-    const skill = await updateSkill(id, { name, category_id, description, display_order });
+    const skill = await updateSkill(id, { name, category_id, display_order });
 
     if (!skill) {
       return NextResponse.json(

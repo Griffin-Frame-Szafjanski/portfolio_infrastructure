@@ -22,6 +22,7 @@ export function middleware(request) {
     "font-src 'self' data:",
     "connect-src 'self' https://vercel.live https://*.vercel.app",
     "media-src 'self' https: blob:",
+    "frame-src 'self' https://*.public.blob.vercel-storage.com", // Allow PDFs from Vercel Blob Storage
     "object-src 'none'",
     "frame-ancestors 'none'",
     "base-uri 'self'",
