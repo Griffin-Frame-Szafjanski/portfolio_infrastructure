@@ -72,7 +72,7 @@ export default function ContactPage() {
       if (data.success) {
         setStatus({
           type: 'success',
-          message: data.message || 'Message sent successfully! We\'ll get back to you soon.'
+          message: data.message || 'Message sent successfully! I\'ll get back to you soon.'
         });
         // Reset form
         setFormData({
