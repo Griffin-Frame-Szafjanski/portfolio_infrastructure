@@ -237,20 +237,18 @@ export default function SkillSelector({ selectedSkillIds = [], onChange }) {
                   {categorySkills.map((skill) => {
                     const isSelected = selectedSkillIds.includes(skill.id);
                     return (
-                      <label
+                      <button
                         key={skill.id}
+                        type="button"
                         className={`skill-checkbox ${isSelected ? 'selected' : ''}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleSkillToggle(skill.id, e);
+                        }}
                       >
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={(e) => {
-                            e.stopPropagation();
-                            handleSkillToggle(skill.id, e);
-                          }}
-                        />
-                        <span>{skill.name}</span>
-                      </label>
+                        {skill.name}
+                      </button>
                     );
                   })}
                 </div>
@@ -355,7 +353,7 @@ export default function SkillSelector({ selectedSkillIds = [], onChange }) {
         .skill-checkbox {
           display: inline-flex;
           align-items: center;
-          gap: 0.5rem;
+          justify-content: center;
           padding: 0.5rem 0.75rem;
           background: #f3f4f6;
           border: 2px solid #e5e7eb;
@@ -376,12 +374,6 @@ export default function SkillSelector({ selectedSkillIds = [], onChange }) {
           border-color: #3b82f6;
           color: #1e40af;
           font-weight: 500;
-        }
-
-        .skill-checkbox input[type="checkbox"] {
-          width: 16px;
-          height: 16px;
-          cursor: pointer;
         }
 
         .skills-grid::-webkit-scrollbar {
