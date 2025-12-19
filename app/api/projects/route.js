@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/auth';
 import { getProjectsWithSkillCount, getProjectsBySkills, createProject, setProjectSkills } from '@/lib/db';
+import { logResourceCreation } from '@/lib/audit-logger';
 
 export async function GET(request) {
   try {
@@ -88,6 +89,14 @@ export async function POST(request) {
     if (skill_ids && Array.isArray(skill_ids) && skill_ids.length > 0) {
       await setProjectSkills(newProject.id, skill_ids);
     }
+
+    // Log project creation
+    await logResourceCreation({
+      user: authResult.user,
+      resourceType: 'project',
+      resourceId: String(newProject.id),
+      details: { title: newProject.title, featured: newProject.featured }
+    }, request);
 
     return NextResponse.json({
       success: true,
