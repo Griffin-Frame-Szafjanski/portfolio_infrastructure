@@ -49,8 +49,8 @@ export default function AdminDashboard() {
       const read = messagesData.messages?.filter(m => m.is_read).length || 0;
       
       setStats({
-        totalProjects: projectsData.projects?.length || 0,
-        totalSkills: skillsData.skills?.length || 0,
+        totalProjects: projectsData.data?.length || 0,
+        totalSkills: Array.isArray(skillsData) ? skillsData.length : 0,
         unreadMessages: unread,
         readMessages: read
       });
