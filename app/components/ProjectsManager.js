@@ -11,6 +11,8 @@ export default function ProjectsManager() {
   const [showForm, setShowForm] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [hasOrderChanges, setHasOrderChanges] = useState(false);
+  const [savingOrder, setSavingOrder] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -20,7 +22,6 @@ export default function ProjectsManager() {
     project_url: '',
     github_url: '',
     image_url: '',
-    display_order: 0,
     featured: false
   });
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -45,6 +46,63 @@ export default function ProjectsManager() {
     }
   };
 
+  const moveProject = (index, direction) => {
+    const newProjects = [...projects];
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    
+    if (newIndex < 0 || newIndex >= newProjects.length) return;
+    
+    // Swap projects
+    [newProjects[index], newProjects[newIndex]] = [newProjects[newIndex], newProjects[index]];
+    
+    setProjects(newProjects);
+    setHasOrderChanges(true);
+  };
+
+  const saveOrder = async () => {
+    setSavingOrder(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      // Update display_order for all projects based on their current position
+      const updates = projects.map((project, index) => ({
+        id: project.id,
+        display_order: index
+      }));
+
+      // Send updates to API
+      const promises = updates.map(update =>
+        fetch(`/api/projects/${update.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...projects.find(p => p.id === update.id),
+            display_order: update.display_order
+          })
+        })
+      );
+
+      await Promise.all(promises);
+
+      setMessage({ type: 'success', text: 'Project order saved successfully!' });
+      setHasOrderChanges(false);
+      await fetchProjects();
+    } catch (error) {
+      console.error('Error saving order:', error);
+      setMessage({ type: 'error', text: 'Failed to save order' });
+    } finally {
+      setSavingOrder(false);
+    }
+  };
+
+  const cancelOrderChanges = async () => {
+    setHasOrderChanges(false);
+    await fetchProjects();
+    setMessage({ type: '', text: '' });
+  };
+
   const resetForm = () => {
     setFormData({
       title: '',
@@ -54,7 +112,6 @@ export default function ProjectsManager() {
       project_url: '',
       github_url: '',
       image_url: '',
-      display_order: 0,
       featured: false
     });
     setEditingProject(null);
@@ -227,12 +284,33 @@ export default function ProjectsManager() {
               <h3>Your Projects ({projects.length})</h3>
               <p>Manage your portfolio projects</p>
             </div>
-            <button 
-              onClick={() => setShowForm(true)} 
-              className="btn btn-primary"
-            >
-              + Add New Project
-            </button>
+            <div className="header-actions">
+              {hasOrderChanges && (
+                <>
+                  <button 
+                    onClick={saveOrder}
+                    disabled={savingOrder}
+                    className="btn btn-success"
+                  >
+                    {savingOrder ? 'Saving...' : 'Save Order'}
+                  </button>
+                  <button 
+                    onClick={cancelOrderChanges}
+                    disabled={savingOrder}
+                    className="btn btn-secondary"
+                  >
+                    Cancel Changes
+                  </button>
+                </>
+              )}
+              <button 
+                onClick={() => setShowForm(true)} 
+                disabled={hasOrderChanges}
+                className="btn btn-primary"
+              >
+                + Add New Project
+              </button>
+            </div>
           </div>
 
           <div className="projects-list">
@@ -241,8 +319,30 @@ export default function ProjectsManager() {
                 <p>No projects yet. Add your first project to get started!</p>
               </div>
             ) : (
-              projects.map(project => (
+              projects.map((project, index) => (
                 <div key={project.id} className="project-card">
+                  <div className="order-controls">
+                    <button
+                      onClick={() => moveProject(index, 'up')}
+                      disabled={index === 0}
+                      className="order-btn"
+                      title="Move up"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => moveProject(index, 'down')}
+                      disabled={index === projects.length - 1}
+                      className="order-btn"
+                      title="Move down"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                  </div>
                   <div className="project-info">
                     <h4>{project.title}</h4>
                     <p>{project.description}</p>
@@ -258,6 +358,7 @@ export default function ProjectsManager() {
                   <div className="project-actions">
                     <button 
                       onClick={() => setMediaManagerProjectId(project.id)}
+                      disabled={hasOrderChanges}
                       className="btn btn-sm btn-media"
                       title="Manage Videos & PDFs"
                     >
@@ -268,12 +369,14 @@ export default function ProjectsManager() {
                     </button>
                     <button 
                       onClick={() => handleEdit(project)}
+                      disabled={hasOrderChanges}
                       className="btn btn-sm btn-secondary"
                     >
                       Edit
                     </button>
                     <button 
                       onClick={() => handleDelete(project.id)}
+                      disabled={hasOrderChanges}
                       className="btn btn-sm btn-danger"
                     >
                       Delete
@@ -411,32 +514,17 @@ export default function ProjectsManager() {
             <div className="form-section">
               <h4>Display Settings</h4>
               
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="display_order">Display Order</label>
+              <div className="form-group">
+                <label className="checkbox-label">
                   <input
-                    type="number"
-                    id="display_order"
-                    name="display_order"
-                    value={formData.display_order}
+                    type="checkbox"
+                    name="featured"
+                    checked={formData.featured}
                     onChange={handleChange}
-                    className="form-input"
-                    min="0"
                   />
-                  <small className="form-help">Lower numbers appear first</small>
-                </div>
-
-                <div className="form-group">
-                  <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      name="featured"
-                      checked={formData.featured}
-                      onChange={handleChange}
-                    />
-                    <span>Featured Project</span>
-                  </label>
-                </div>
+                  <span>Featured Project</span>
+                </label>
+                <small className="form-help">Featured projects appear at the top. Use the arrows on the main list to change priority order.</small>
               </div>
             </div>
 
@@ -502,6 +590,26 @@ export default function ProjectsManager() {
           color: #6b7280;
         }
 
+        .header-actions {
+          display: flex;
+          gap: var(--spacing-sm);
+          flex-wrap: wrap;
+        }
+
+        .btn-success {
+          background-color: #28a745;
+          color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+          background-color: #218838;
+        }
+
+        .btn-success:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
         .projects-list {
           display: flex;
           flex-direction: column;
@@ -529,6 +637,42 @@ export default function ProjectsManager() {
 
         .project-card:hover {
           box-shadow: var(--shadow-md);
+        }
+
+        .order-controls {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+          flex-shrink: 0;
+        }
+
+        .order-btn {
+          background: white;
+          border: 1px solid #d1d5db;
+          border-radius: 0.375rem;
+          padding: 0.25rem;
+          cursor: pointer;
+          transition: all 0.2s;
+          color: #6b7280;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .order-btn:hover:not(:disabled) {
+          background: #f3f4f6;
+          border-color: #9ca3af;
+          color: #374151;
+        }
+
+        .order-btn:disabled {
+          opacity: 0.3;
+          cursor: not-allowed;
+        }
+
+        .order-btn svg {
+          width: 1rem;
+          height: 1rem;
         }
 
         .project-info {

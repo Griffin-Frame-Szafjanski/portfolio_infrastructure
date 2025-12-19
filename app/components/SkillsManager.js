@@ -7,11 +7,12 @@ export default function SkillsManager() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
+  const [hasOrderChanges, setHasOrderChanges] = useState(false);
+  const [savingOrder, setSavingOrder] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     category_id: '',
-    description: '',
-    display_order: 0
+    description: ''
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -49,6 +50,97 @@ export default function SkillsManager() {
     }
   };
 
+  const moveSkill = (skill, direction, categorySkills) => {
+    // Find the index within this category
+    const indexInCategory = categorySkills.findIndex(s => s.id === skill.id);
+    const newIndexInCategory = direction === 'up' ? indexInCategory - 1 : indexInCategory + 1;
+    
+    if (newIndexInCategory < 0 || newIndexInCategory >= categorySkills.length) return;
+    
+    // Create a new array of all skills
+    const newSkills = [...skills];
+    
+    // Swap the two skills in the category
+    const skill1 = categorySkills[indexInCategory];
+    const skill2 = categorySkills[newIndexInCategory];
+    
+    // Find their indices in the full skills array
+    const fullIndex1 = newSkills.findIndex(s => s.id === skill1.id);
+    const fullIndex2 = newSkills.findIndex(s => s.id === skill2.id);
+    
+    // Swap them
+    [newSkills[fullIndex1], newSkills[fullIndex2]] = [newSkills[fullIndex2], newSkills[fullIndex1]];
+    
+    setSkills(newSkills);
+    setHasOrderChanges(true);
+  };
+
+  const saveOrder = async () => {
+    setSavingOrder(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      // Group skills by category and assign new display_order within each group
+      const uncategorizedSkills = skills.filter(s => !s.category_id);
+      const categorizedSkills = {};
+      
+      categories.forEach(cat => {
+        categorizedSkills[cat.id] = skills.filter(s => s.category_id === cat.id);
+      });
+
+      const promises = [];
+      
+      // Update uncategorized skills
+      uncategorizedSkills.forEach((skill, index) => {
+        promises.push(
+          fetch(`/api/skills/${skill.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ...skill,
+              display_order: index
+            })
+          })
+        );
+      });
+      
+      // Update categorized skills
+      Object.values(categorizedSkills).forEach(categorySkillsArray => {
+        categorySkillsArray.forEach((skill, index) => {
+          promises.push(
+            fetch(`/api/skills/${skill.id}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                ...skill,
+                display_order: index
+              })
+            })
+          );
+        });
+      });
+
+      await Promise.all(promises);
+
+      setSuccess('Skill order saved successfully!');
+      setHasOrderChanges(false);
+      await fetchSkills();
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (error) {
+      console.error('Error saving order:', error);
+      setError('Failed to save order');
+    } finally {
+      setSavingOrder(false);
+    }
+  };
+
+  const cancelOrderChanges = async () => {
+    setHasOrderChanges(false);
+    await fetchSkills();
+    setError('');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -74,7 +166,7 @@ export default function SkillsManager() {
 
       if (response.ok) {
         setSuccess(editingId ? 'Skill updated successfully!' : 'Skill created successfully!');
-        setFormData({ name: '', category_id: '', description: '', display_order: 0 });
+        setFormData({ name: '', category_id: '', description: '' });
         setEditingId(null);
         fetchSkills();
         setTimeout(() => setSuccess(''), 3000);
@@ -88,12 +180,17 @@ export default function SkillsManager() {
   };
 
   const handleEdit = (skill) => {
+    if (hasOrderChanges) {
+      if (!confirm('You have unsaved order changes. Do you want to discard them?')) {
+        return;
+      }
+      setHasOrderChanges(false);
+    }
     setEditingId(skill.id);
     setFormData({
       name: skill.name,
       category_id: skill.category_id || '',
-      description: skill.description || '',
-      display_order: skill.display_order
+      description: skill.description || ''
     });
     setError('');
     setSuccess('');
@@ -101,7 +198,7 @@ export default function SkillsManager() {
 
   const handleCancelEdit = () => {
     setEditingId(null);
-    setFormData({ name: '', category_id: '', description: '', display_order: 0 });
+    setFormData({ name: '', category_id: '', description: '' });
     setError('');
   };
 
@@ -188,6 +285,7 @@ export default function SkillsManager() {
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                 required
+                disabled={hasOrderChanges}
               />
             </div>
 
@@ -199,6 +297,7 @@ export default function SkillsManager() {
                 value={formData.category_id}
                 onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                disabled={hasOrderChanges}
               >
                 <option value="">No Category</option>
                 {categories.map((cat) => (
@@ -219,25 +318,18 @@ export default function SkillsManager() {
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
               rows="2"
+              disabled={hasOrderChanges}
             />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700">
-              Display Order
-            </label>
-            <input
-              type="number"
-              value={formData.display_order}
-              onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
-            />
+            <small className="text-gray-500 text-sm mt-1 block">
+              Skills are ordered within their category. Use the arrows below to change priority.
+            </small>
           </div>
 
           <div className="flex gap-2">
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              disabled={hasOrderChanges}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {editingId ? 'Update Skill' : 'Add Skill'}
             </button>
@@ -245,7 +337,8 @@ export default function SkillsManager() {
               <button
                 type="button"
                 onClick={handleCancelEdit}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+                disabled={hasOrderChanges}
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancel
               </button>
@@ -260,18 +353,38 @@ export default function SkillsManager() {
           <h3 className="text-xl font-bold text-gray-900">
             Skills ({filteredSkills.length})
           </h3>
-          <select
-            value={filterCategory}
-            onChange={(e) => setFilterCategory(e.target.value)}
-            className="px-3 py-1 border border-gray-300 rounded-lg text-sm bg-white text-gray-900"
-          >
-            <option value="">All Categories</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
+          <div className="flex items-center gap-3">
+            {hasOrderChanges && (
+              <div className="flex gap-2">
+                <button
+                  onClick={saveOrder}
+                  disabled={savingOrder}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 text-sm"
+                >
+                  {savingOrder ? 'Saving...' : 'Save Order'}
+                </button>
+                <button
+                  onClick={cancelOrderChanges}
+                  disabled={savingOrder}
+                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 disabled:opacity-50 text-sm"
+                >
+                  Cancel Changes
+                </button>
+              </div>
+            )}
+            <select
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value)}
+              className="px-3 py-1 border border-gray-300 rounded-lg text-sm bg-white text-gray-900"
+            >
+              <option value="">All Categories</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {filteredSkills.length === 0 ? (
@@ -287,36 +400,57 @@ export default function SkillsManager() {
                     {categoryName === 'uncategorized' ? 'Uncategorized' : categoryName}
                   </h4>
                   <div className="space-y-2">
-                    {categorySkills.map((skill) => (
+                    {categorySkills.map((skill, indexInCategory) => (
                       <div
                         key={skill.id}
                         className="flex items-start justify-between p-3 bg-gray-50 rounded-lg"
                       >
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
+                        <div className="flex gap-3 items-start flex-1">
+                          <div className="flex flex-col gap-1">
+                            <button
+                              onClick={() => moveSkill(skill, 'up', categorySkills)}
+                              disabled={indexInCategory === 0}
+                              className="p-1 bg-white border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
+                              title="Move up"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" />
+                              </svg>
+                            </button>
+                            <button
+                              onClick={() => moveSkill(skill, 'down', categorySkills)}
+                              disabled={indexInCategory === categorySkills.length - 1}
+                              className="p-1 bg-white border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
+                              title="Move down"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                              </svg>
+                            </button>
+                          </div>
+                          <div className="flex-1">
                             <h5 className="font-medium text-gray-900">
                               {skill.name}
                             </h5>
-                            <span className="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded">
-                              Order: {skill.display_order}
-                            </span>
+                            {skill.description && (
+                              <p className="text-sm text-gray-600 mt-1">
+                                {skill.description}
+                              </p>
+                            )}
                           </div>
-                          {skill.description && (
-                            <p className="text-sm text-gray-600 mt-1">
-                              {skill.description}
-                            </p>
-                          )}
                         </div>
                         <div className="flex gap-2 ml-4">
                           <button
                             onClick={() => handleEdit(skill)}
-                            className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                            disabled={hasOrderChanges}
+                            className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             Edit
                           </button>
                           <button
                             onClick={() => handleDelete(skill.id)}
-                            className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
+                            disabled={hasOrderChanges}
+                            className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             Delete
                           </button>
