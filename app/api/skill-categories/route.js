@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getSkillCategories, createSkillCategory } from '@/lib/db';
 import { verifyAuth } from '@/lib/auth';
+import { logResourceCreation } from '@/lib/audit-logger';
 
 // GET all skill categories
 export async function GET(request) {
@@ -35,6 +36,15 @@ export async function POST(request) {
     }
 
     const category = await createSkillCategory({ name, description, display_order });
+    
+    // Log the creation
+    await logResourceCreation({
+      user: authResult.user,
+      resourceType: 'skill_category',
+      resourceId: String(category.id),
+      details: { name: category.name }
+    }, request);
+    
     return NextResponse.json(category, { status: 201 });
   } catch (error) {
     console.error('Error creating skill category:', error);

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/auth';
-import { updateBiography } from '@/lib/db';
+import { updateBiography, getBiography } from '@/lib/db';
+import { logResourceUpdate } from '@/lib/audit-logger';
+import { cleanupReplacedBlobs } from '@/lib/blob-cleanup';
 
 // PUT - Update biography
 export async function PUT(request, { params }) {
@@ -32,6 +34,9 @@ export async function PUT(request, { params }) {
       profile_photo_url
     } = body;
 
+    // Get current biography for blob cleanup
+    const oldBio = await getBiography();
+
     // Update biography in database
     const updatedBio = await updateBiography({
       full_name,
@@ -46,6 +51,20 @@ export async function PUT(request, { params }) {
       resume_pdf_url,
       profile_photo_url
     });
+
+    // Cleanup old blob files if URLs were replaced
+    await cleanupReplacedBlobs(oldBio, body, [
+      'profile_photo_url',
+      'resume_pdf_url'
+    ]);
+
+    // Log the update
+    await logResourceUpdate({
+      user: authResult.user,
+      resourceType: 'biography',
+      resourceId: String(id),
+      details: { full_name: updatedBio.full_name, changes: body }
+    }, request);
 
     return NextResponse.json({
       success: true,

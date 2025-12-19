@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/auth';
 import { updateMessage, deleteMessage } from '@/lib/db';
+import { logResourceUpdate, logResourceDeletion } from '@/lib/audit-logger';
 
 // PUT - Update message (mark as read/unread)
 export async function PUT(request, { params }) {
@@ -27,6 +28,14 @@ export async function PUT(request, { params }) {
         { status: 404 }
       );
     }
+
+    // Log the update
+    await logResourceUpdate({
+      user: authResult.user,
+      resourceType: 'message',
+      resourceId: String(id),
+      details: { read, from: updatedMessage.name }
+    }, request);
 
     return NextResponse.json({
       success: true,
@@ -65,6 +74,14 @@ export async function DELETE(request, { params }) {
         { status: 404 }
       );
     }
+
+    // Log the deletion
+    await logResourceDeletion({
+      user: authResult.user,
+      resourceType: 'message',
+      resourceId: String(id),
+      details: { from: deleted.name, email: deleted.email }
+    }, request);
 
     return NextResponse.json({
       success: true,

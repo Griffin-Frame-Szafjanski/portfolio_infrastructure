@@ -1,6 +1,7 @@
 import { put } from '@vercel/blob';
 import { NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/auth';
+import { logFileUpload } from '@/lib/audit-logger';
 
 export async function POST(request) {
   try {
@@ -53,6 +54,14 @@ export async function POST(request) {
       access: 'public',
       token: process.env.BLOB_READ_WRITE_TOKEN,
     });
+
+    // Log the file upload
+    await logFileUpload({
+      user: authResult.user,
+      filename: filename,
+      fileType: file.type,
+      fileSize: file.size
+    }, request);
 
     return NextResponse.json({
       success: true,

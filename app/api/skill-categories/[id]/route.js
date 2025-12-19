@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getSkillCategoryById, updateSkillCategory, deleteSkillCategory } from '@/lib/db';
 import { verifyAuth } from '@/lib/auth';
+import { logResourceUpdate, logResourceDeletion } from '@/lib/audit-logger';
 
 // GET single skill category
 export async function GET(request, { params }) {
@@ -53,6 +54,14 @@ export async function PUT(request, { params }) {
       );
     }
 
+    // Log the update
+    await logResourceUpdate({
+      user: authResult.user,
+      resourceType: 'skill_category',
+      resourceId: String(id),
+      details: { name: category.name, changes: body }
+    }, request);
+
     return NextResponse.json(category);
   } catch (error) {
     console.error('Error updating skill category:', error);
@@ -92,6 +101,14 @@ export async function DELETE(request, { params }) {
     }
 
     await deleteSkillCategory(id);
+
+    // Log the deletion
+    await logResourceDeletion({
+      user: authResult.user,
+      resourceType: 'skill_category',
+      resourceId: String(id),
+      details: { name: category.name }
+    }, request);
 
     return NextResponse.json({ 
       message: 'Category deleted successfully',

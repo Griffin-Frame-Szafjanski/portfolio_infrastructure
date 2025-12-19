@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/auth';
-import { updateProject, deleteProject, setProjectSkills } from '@/lib/db';
+import { updateProject, deleteProject, setProjectSkills, getProjectById } from '@/lib/db';
+import { logResourceUpdate, logResourceDeletion } from '@/lib/audit-logger';
+import { cleanupReplacedBlobs } from '@/lib/blob-cleanup';
 
 // PUT - Update a project
 export async function PUT(request, { params }) {
@@ -30,6 +32,15 @@ export async function PUT(request, { params }) {
       featured
     } = body;
 
+    // Get current project for blob cleanup
+    const oldProject = await getProjectById(id);
+    if (!oldProject) {
+      return NextResponse.json(
+        { success: false, error: 'Project not found' },
+        { status: 404 }
+      );
+    }
+
     // Update project in database
     const updatedProject = await updateProject(id, {
       title,
@@ -42,17 +53,21 @@ export async function PUT(request, { params }) {
       featured: featured || false
     });
 
-    if (!updatedProject) {
-      return NextResponse.json(
-        { success: false, error: 'Project not found' },
-        { status: 404 }
-      );
-    }
-
     // Update project skills
     if (skill_ids !== undefined && Array.isArray(skill_ids)) {
       await setProjectSkills(id, skill_ids);
     }
+
+    // Cleanup old blob files if image URL was replaced
+    await cleanupReplacedBlobs(oldProject, body, ['image_url']);
+
+    // Log the update
+    await logResourceUpdate({
+      user: authResult.user,
+      resourceType: 'project',
+      resourceId: String(id),
+      details: { title: updatedProject.title, changes: body }
+    }, request);
 
     return NextResponse.json({
       success: true,
@@ -93,6 +108,14 @@ export async function DELETE(request, { params }) {
         { status: 404 }
       );
     }
+
+    // Log the deletion
+    await logResourceDeletion({
+      user: authResult.user,
+      resourceType: 'project',
+      resourceId: String(id),
+      details: { title: deleted.title }
+    }, request);
 
     return NextResponse.json({
       success: true,

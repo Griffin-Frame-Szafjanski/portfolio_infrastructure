@@ -1,6 +1,7 @@
 import { put } from '@vercel/blob';
 import { NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/auth';
+import { logFileUpload } from '@/lib/audit-logger';
 
 export async function POST(request) {
   try {
@@ -54,6 +55,14 @@ export async function POST(request) {
     const blob = await put(`project-images/${Date.now()}-${file.name}`, file, {
       access: 'public',
     });
+
+    // Log the file upload
+    await logFileUpload({
+      user: authResult.user,
+      filename: file.name,
+      fileType: file.type,
+      fileSize: file.size
+    }, request);
 
     return NextResponse.json({
       success: true,

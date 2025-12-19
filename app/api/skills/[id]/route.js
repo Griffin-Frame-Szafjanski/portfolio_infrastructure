@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getSkillWithProjects, updateSkill, deleteSkill, getSkillById } from '@/lib/db';
 import { verifyAuth } from '@/lib/auth';
+import { logResourceUpdate, logResourceDeletion } from '@/lib/audit-logger';
 
 // GET single skill with related projects
 export async function GET(request, { params }) {
@@ -53,6 +54,14 @@ export async function PUT(request, { params }) {
       );
     }
 
+    // Log the update
+    await logResourceUpdate({
+      user: authResult.user,
+      resourceType: 'skill',
+      resourceId: String(id),
+      details: { name: skill.name, changes: body }
+    }, request);
+
     return NextResponse.json(skill);
   } catch (error) {
     console.error('Error updating skill:', error);
@@ -93,6 +102,14 @@ export async function DELETE(request, { params }) {
 
     // The project_skills relationships will be deleted automatically (CASCADE)
     await deleteSkill(id);
+
+    // Log the deletion
+    await logResourceDeletion({
+      user: authResult.user,
+      resourceType: 'skill',
+      resourceId: String(id),
+      details: { name: skill.name }
+    }, request);
 
     return NextResponse.json({ 
       message: 'Skill deleted successfully',
