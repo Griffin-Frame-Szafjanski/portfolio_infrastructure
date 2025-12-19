@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createMessage } from '@/lib/db';
 import { rateLimit } from '@/lib/rate-limiter';
+import { validateContactForm } from '@/lib/validation';
+import { isPrototypePollutionSafe } from '@/lib/sanitize';
 
 // POST - Submit contact form
 export async function POST(request) {
@@ -12,24 +14,25 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { name, email, subject, message } = body;
-
-    // Validate required fields
-    if (!name || !email || !subject || !message) {
+    
+    // Check for prototype pollution
+    if (!isPrototypePollutionSafe(body)) {
       return NextResponse.json(
-        { success: false, error: 'All fields are required' },
+        { success: false, error: 'Invalid request data' },
         { status: 400 }
       );
     }
 
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    // Validate and sanitize input
+    const validation = validateContactForm(body);
+    if (!validation.valid) {
       return NextResponse.json(
-        { success: false, error: 'Invalid email address' },
+        { success: false, error: validation.errors[0] || 'Invalid input' },
         { status: 400 }
       );
     }
+
+    const { name, email, subject, message } = validation.data;
 
     // Create message in database
     const newMessage = await createMessage({
