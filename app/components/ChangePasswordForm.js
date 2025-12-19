@@ -266,6 +266,7 @@ export default function ChangePasswordForm() {
         .form-header h3 {
           margin: 0;
           font-size: 1.25rem;
+          color: #1f2937;
         }
 
         .close-button {
