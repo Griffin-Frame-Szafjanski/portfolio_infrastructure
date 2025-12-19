@@ -7,18 +7,25 @@ A modern, full-stack portfolio application built with Next.js 15, featuring a po
 ### Public Portfolio
 - 📝 **Dynamic Biography** - Personal information, skills, resume, and social links
 - 🚀 **Project Showcase** - Display projects with images, videos, and PDF documentation
+- 🎯 **Skills System** - Organized skills display with categories and filtering
+- 🔍 **Project Filtering** - Filter projects by skill on projects page
 - 🎬 **Media Support** - Embedded YouTube videos and PDF viewers
 - 🌓 **Dark Mode** - Beautiful light/dark theme toggle
-- 📧 **Contact Form** - Visitors can send messages directly
+- 📧 **Contact Form** - Visitors can send messages directly with rate limiting
 - 📱 **Fully Responsive** - Optimized for all devices
 
 ### Admin Dashboard
-- 🔐 **Secure Authentication** - JWT-based login with rate limiting
+- 🔐 **Secure Authentication** - JWT-based login with rate limiting and account lockout
 - ✏️ **Biography Editor** - Update personal info, upload photo and resume
 - 🎨 **Projects Manager** - CRUD operations with media management
+- 🏷️ **Skills Manager** - Manage individual skills with category assignment
+- 📂 **Categories Manager** - Organize skills into categories
+- 🔗 **Skill-Project Linking** - Associate skills with projects
 - 📹 **Media Management** - Add videos, PDFs, reorder with drag-and-drop arrows
 - 💬 **Messages Dashboard** - View and manage contact submissions
+- 📊 **Audit Logs Viewer** - Track all admin actions and changes
 - 🔑 **Password Management** - Secure password change functionality
+- 🧹 **Automatic Blob Cleanup** - Old files automatically deleted on replacement
 - 🔒 **Always Light Mode** - Admin interface uses consistent light theme
 
 ## 🛠️ Tech Stack
@@ -70,7 +77,8 @@ Visit http://localhost:3000
 
 - **[SETUP.md](SETUP.md)** - Complete setup and deployment guide
 - **[ADMIN_GUIDE.md](ADMIN_GUIDE.md)** - Admin panel usage instructions
-- **[SECURITY_AUDIT.md](SECURITY_AUDIT.md)** - Security measures and best practices
+- **[SECURITY.md](SECURITY.md)** - Security measures and best practices
+- **[DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)** - Pre-deployment checklist
 - **[DATABASE_COMPLETE_SCHEMA.sql](DATABASE_COMPLETE_SCHEMA.sql)** - Complete database schema
 
 ## 📁 Project Structure
@@ -79,22 +87,59 @@ Visit http://localhost:3000
 portfolio_infrastructure/
 ├── app/
 │   ├── admin/              # Admin dashboard pages
-│   ├── api/                # API routes (REST endpoints)
-│   ├── components/         # React components
-│   ├── context/            # React Context (theme management)
-│   ├── biography/          # Biography page
-│   ├── projects/           # Projects pages
-│   └── contact/            # Contact page
+│   │   ├── audit-logs/    # Audit logs viewer page
+│   │   ├── dashboard/     # Main admin dashboard
+│   │   └── login/         # Admin login page
+│   ├── api/               # API routes (REST endpoints)
+│   │   ├── admin/         # Admin-specific endpoints
+│   │   ├── biography/     # Biography CRUD
+│   │   ├── contact/       # Contact form submission
+│   │   ├── projects/      # Projects CRUD & media
+│   │   ├── skills/        # Skills CRUD
+│   │   ├── skill-categories/  # Categories CRUD
+│   │   └── upload/        # File upload endpoints
+│   ├── components/        # React components
+│   │   ├── BiographyEditor.js
+│   │   ├── ProjectsManager.js
+│   │   ├── SkillsManager.js
+│   │   ├── CategoriesManager.js
+│   │   ├── MessagesManager.js
+│   │   ├── AuditLogsViewer.js
+│   │   └── ...            # Other components
+│   ├── context/           # React Context
+│   │   └── ThemeContext.js  # Dark mode management
+│   ├── biography/         # Biography page
+│   ├── projects/          # Projects pages
+│   ├── skills/            # Skills page
+│   └── contact/           # Contact page
 ├── lib/
-│   ├── auth.js             # Authentication & JWT
-│   ├── db.js               # Database operations
-│   └── youtube.js          # YouTube embed helpers
+│   ├── auth.js            # Authentication & JWT
+│   ├── db.js              # Database operations
+│   ├── audit-logger.js    # Audit logging system
+│   ├── blob-cleanup.js    # Automatic file cleanup
+│   ├── rate-limiter.js    # Rate limiting
+│   ├── validation.js      # Input validation
+│   ├── sanitize.js        # Input sanitization
+│   ├── error-handler.js   # Error handling
+│   ├── env-validator.js   # Environment validation
+│   └── youtube.js         # YouTube embed helpers
 ├── scripts/
-│   └── hash-password.js    # Password hashing utility
-├── SETUP.md                # Setup guide
-├── ADMIN_GUIDE.md          # Admin manual
-├── SECURITY_AUDIT.md       # Security documentation
-└── DATABASE_COMPLETE_SCHEMA.sql  # Database schema
+│   └── hash-password.js   # Password hashing utility
+├── public/                # Static assets
+├── SETUP.md               # Setup guide
+├── ADMIN_GUIDE.md         # Admin manual
+├── SECURITY.md            # Security documentation
+├── DEPLOYMENT_CHECKLIST.md  # Deployment checklist
+├── AUDIT_LOGGING_COMPLETE.md  # Audit logging guide
+├── BLOB_CLEANUP_GUIDE.md  # Blob cleanup guide
+├── SKILLS_SETUP.md        # Skills system setup
+├── VERCEL_FILE_SIZE_LIMITS.md  # File size limits info
+├── DATABASE_COMPLETE_SCHEMA.sql  # Complete database schema
+├── DATABASE_AUDIT_LOGS.sql      # Audit logs schema
+├── DATABASE_SKILLS_SCHEMA.sql   # Skills system schema
+├── middleware.js          # Next.js middleware (security headers)
+├── vercel.json            # Vercel configuration
+└── next.config.js         # Next.js configuration
 ```
 
 ## 🔑 Key Features
@@ -129,11 +174,13 @@ portfolio_infrastructure/
 |------|-------|-------------|
 | Home | `/` | Landing with hero and featured content |
 | Biography | `/biography` | Full biography with resume viewer |
-| Projects | `/projects` | All projects showcase |
+| Projects | `/projects` | All projects showcase with skill filtering |
 | Project Detail | `/projects/[id]` | Individual project with media tabs |
+| Skills | `/skills` | Skills organized by categories |
 | Contact | `/contact` | Contact form with validation |
 | Admin Login | `/admin/login` | Secure authentication |
-| Admin Dashboard | `/admin/dashboard` | Content management hub |
+| Admin Dashboard | `/admin/dashboard` | Content management hub with tabs |
+| Audit Logs | `/admin/audit-logs` | View all admin actions and changes |
 
 ## ⚙️ Environment Variables
 
@@ -192,7 +239,7 @@ theme: {
 1. **Change default admin password immediately**
 2. Use strong passwords (12+ characters, mixed case, numbers, symbols)
 3. Set a secure `JWT_SECRET` (32+ random characters)
-4. Review `SECURITY_AUDIT.md` for complete security guide
+4. Review `SECURITY.md` for complete security guide
 5. Keep dependencies updated: `npm audit`
 6. Enable HTTPS in production (Vercel provides automatically)
 
@@ -261,21 +308,58 @@ See **[SETUP.md](SETUP.md)** for detailed deployment instructions including:
 ### Public
 - `GET /api/biography` - Biography data
 - `GET /api/projects` - All projects
-- `GET /api/projects/[id]` - Single project
+- `GET /api/projects/[id]` - Single project with skills
 - `GET /api/projects/[id]/media` - Project media
+- `GET /api/skills` - All skills (with optional category filter)
+- `GET /api/skills/[id]` - Single skill with related projects
+- `GET /api/skill-categories` - All skill categories
 - `POST /api/contact` - Submit contact form
 
 ### Protected (requires authentication)
+
+**Biography**
 - `PUT /api/biography/[id]` - Update biography
+
+**Projects**
 - `POST /api/projects` - Create project
 - `PUT /api/projects/[id]` - Update project
 - `DELETE /api/projects/[id]` - Delete project
+- `GET /api/projects/[id]/skills` - Get project skills
+- `POST /api/projects/[id]/skills` - Associate skills with project
+- `DELETE /api/projects/[id]/skills` - Remove skill from project
+
+**Media**
 - `POST /api/projects/[id]/media` - Add media
 - `PUT /api/projects/[id]/media` - Update media
 - `DELETE /api/projects/[id]/media` - Delete media
+
+**Skills**
+- `POST /api/skills` - Create skill
+- `PUT /api/skills/[id]` - Update skill
+- `DELETE /api/skills/[id]` - Delete skill
+
+**Skill Categories**
+- `POST /api/skill-categories` - Create category
+- `PUT /api/skill-categories/[id]` - Update category
+- `DELETE /api/skill-categories/[id]` - Delete category
+
+**Messages**
 - `GET /api/admin/messages` - Get messages
+- `PUT /api/admin/messages/[id]` - Update message (mark as read)
+- `DELETE /api/admin/messages/[id]` - Delete message
+
+**Admin**
+- `POST /api/admin/login` - Admin login
+- `POST /api/admin/logout` - Admin logout
+- `GET /api/admin/me` - Check auth status
 - `POST /api/admin/change-password` - Change password
-- All `/api/upload/*` endpoints
+- `GET /api/admin/audit-logs` - View audit logs
+
+**File Uploads**
+- `POST /api/upload/photo` - Upload profile photo
+- `POST /api/upload/resume` - Upload resume PDF
+- `POST /api/upload/project-image` - Upload project image
+- `POST /api/upload/project-pdf` - Upload project PDF
 
 ## 🧪 Development Commands
 
@@ -307,10 +391,12 @@ Built with modern web technologies:
 
 ## 📄 License
 
-MIT License - free to use for your own portfolio!
+**All Rights Reserved** - Do not use without permission.
+
+This code is proprietary and confidential. Unauthorized copying, modification, distribution, or use of this software, via any medium, is strictly prohibited without explicit written permission from the owner.
 
 ---
 
 **For detailed setup instructions, see [SETUP.md](SETUP.md)**  
 **For admin usage guide, see [ADMIN_GUIDE.md](ADMIN_GUIDE.md)**  
-**For security information, see [SECURITY_AUDIT.md](SECURITY_AUDIT.md)**
+**For security information, see [SECURITY.md](SECURITY.md)**

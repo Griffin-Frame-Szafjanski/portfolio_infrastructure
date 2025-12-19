@@ -243,7 +243,7 @@ All required variables should be set:
 - Change password regularly
 - Use strong passwords (12+ characters)
 - Enable 2FA if available
-- Review SECURITY_AUDIT.md for best practices
+- Review SECURITY.md for best practices
 
 ## Project Structure
 
@@ -264,7 +264,7 @@ portfolio_infrastructure/
 ├── .env.local           # Environment variables (create this)
 ├── DATABASE_COMPLETE_SCHEMA.sql  # Database schema
 ├── ADMIN_GUIDE.md       # Admin usage guide
-├── SECURITY_AUDIT.md    # Security documentation
+├── SECURITY.md          # Security documentation
 └── README.md            # Project overview
 ```
 
@@ -308,7 +308,7 @@ portfolio_infrastructure/
 
 For issues and questions:
 1. Check `ADMIN_GUIDE.md` for admin panel help
-2. Review `SECURITY_AUDIT.md` for security best practices
+2. Review `SECURITY.md` for security best practices
 3. Check Next.js documentation: https://nextjs.org/docs
 4. Neon documentation: https://neon.tech/docs
 

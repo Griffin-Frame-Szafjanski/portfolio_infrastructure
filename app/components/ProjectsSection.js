@@ -27,7 +27,7 @@ function ProjectCard({ project }) {
   
   return (
     <div className="bg-white rounded-2xl p-8 shadow-md transition-all hover:-translate-y-1 hover:shadow-xl border border-gray-200">
-      <div className="w-full h-48 rounded-xl mb-6 overflow-hidden">
+      <div className="w-full h-48 rounded-xl mb-6 overflow-hidden border-2 border-gray-200">
         {project.image_url ? (
           <img 
             src={project.image_url} 
