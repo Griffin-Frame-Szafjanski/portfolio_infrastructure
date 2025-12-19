@@ -1,0 +1,20 @@
+{
+  "functions": {
+    "app/api/upload/project-pdf/route.js": {
+      "maxDuration": 60,
+      "memory": 1024
+    },
+    "app/api/upload/resume/route.js": {
+      "maxDuration": 60,
+      "memory": 1024
+    },
+    "app/api/upload/project-image/route.js": {
+      "maxDuration": 60,
+      "memory": 1024
+    },
+    "app/api/upload/photo/route.js": {
+      "maxDuration": 60,
+      "memory": 1024
+    }
+  }
+}

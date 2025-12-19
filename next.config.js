@@ -8,13 +8,6 @@ const nextConfig = {
   // Enable React strict mode
   reactStrictMode: true,
   
-  // Increase body size limit for API routes (for file uploads)
-  experimental: {
-    serverActions: {
-      bodySizeLimit: '25mb',
-    },
-  },
-  
   // Security headers (additional to middleware)
   async headers() {
     return [

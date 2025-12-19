@@ -3,14 +3,9 @@ import { put } from '@vercel/blob';
 import { requireAuth } from '@/lib/auth';
 import { logFileUpload } from '@/lib/audit-logger';
 
-// Configure the route to accept larger payloads (for 20MB PDFs)
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '25mb',
-    },
-  },
-};
+// Route segment config for App Router (allows larger file uploads)
+export const runtime = 'nodejs';
+export const preferredRegion = 'auto';
 
 export async function POST(request) {
   try {
