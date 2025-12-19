@@ -3,6 +3,15 @@ import { put } from '@vercel/blob';
 import { requireAuth } from '@/lib/auth';
 import { logFileUpload } from '@/lib/audit-logger';
 
+// Configure the route to accept larger payloads (for 20MB PDFs)
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '25mb',
+    },
+  },
+};
+
 export async function POST(request) {
   try {
     // Check authentication
