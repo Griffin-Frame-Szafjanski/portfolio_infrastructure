@@ -45,8 +45,8 @@ export default function AdminDashboard() {
       const messagesRes = await fetch('/api/admin/messages');
       const messagesData = await messagesRes.json();
       
-      const unread = messagesData.messages?.filter(m => !m.is_read).length || 0;
-      const read = messagesData.messages?.filter(m => m.is_read).length || 0;
+      const unread = messagesData.data?.filter(m => !m.is_read).length || 0;
+      const read = messagesData.data?.filter(m => m.is_read).length || 0;
       
       setStats({
         totalProjects: projectsData.data?.length || 0,
