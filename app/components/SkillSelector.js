@@ -67,6 +67,7 @@ export default function SkillSelector({ selectedSkillIds = [], onChange }) {
 
   const handleCreateSkill = async (e) => {
     e.preventDefault();
+    e.stopPropagation(); // Prevent bubbling to parent form
     if (!newSkillData.name.trim()) return;
 
     setCreatingSkill(true);
@@ -166,14 +167,14 @@ export default function SkillSelector({ selectedSkillIds = [], onChange }) {
                 value={newSkillData.name}
                 onChange={(e) => setNewSkillData({ ...newSkillData, name: e.target.value })}
                 placeholder="Skill name"
-                className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900 placeholder-gray-500"
                 required
                 disabled={creatingSkill}
               />
               <select
                 value={newSkillData.category_id}
                 onChange={(e) => setNewSkillData({ ...newSkillData, category_id: e.target.value })}
-                className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                 disabled={creatingSkill}
               >
                 <option value="">No Category</option>
