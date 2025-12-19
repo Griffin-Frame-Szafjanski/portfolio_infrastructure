@@ -363,7 +363,7 @@ function ProjectsContent() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedSkills, setSelectedSkills] = useState([]);
 
-  // Parse selected skills and categories from URL on mount
+  // Parse selected skills and categories from URL on mount and when searchParams change
   useEffect(() => {
     const skillsParam = searchParams.get('skills');
     const categoriesParam = searchParams.get('categories');
@@ -371,6 +371,8 @@ function ProjectsContent() {
     if (skillsParam) {
       const skillIds = skillsParam.split(',').map(id => parseInt(id)).filter(id => !isNaN(id));
       setSelectedSkills(skillIds);
+    } else {
+      setSelectedSkills([]);
     }
     
     if (categoriesParam) {
@@ -380,8 +382,10 @@ function ProjectsContent() {
         return isNaN(parsedId) ? null : parsedId;
       }).filter(id => id !== null);
       setSelectedCategories(categoryIds);
+    } else {
+      setSelectedCategories([]);
     }
-  }, []);
+  }, [searchParams]);
 
   // Load skills and categories
   useEffect(() => {

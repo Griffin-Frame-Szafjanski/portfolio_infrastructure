@@ -37,11 +37,13 @@ export async function POST(request) {
       );
     }
 
-    // Validate file size (10MB max)
-    const maxSize = 10 * 1024 * 1024; // 10MB
+    // Validate file size (4MB max)
+    // Note: Vercel free tier has a 4.5MB request body limit
+    // We set it to 4MB to account for form data overhead
+    const maxSize = 4 * 1024 * 1024; // 4MB
     if (file.size > maxSize) {
       return NextResponse.json(
-        { success: false, error: 'File too large. Maximum size is 10MB.' },
+        { success: false, error: 'File too large. Maximum size is 4MB (Vercel free tier limit).' },
         { status: 400 }
       );
     }

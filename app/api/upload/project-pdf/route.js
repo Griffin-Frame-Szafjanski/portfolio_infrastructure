@@ -45,11 +45,13 @@ export async function POST(request) {
       );
     }
 
-    // Validate file size (max 20MB for project PDFs)
-    const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
+    // Validate file size (max 4MB for project PDFs)
+    // Note: Vercel free tier has a 4.5MB request body limit
+    // We set it to 4MB to account for form data overhead
+    const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
-        { success: false, error: 'File too large. Maximum size is 20MB.' },
+        { success: false, error: 'File too large. Maximum size is 4MB (Vercel free tier limit).' },
         { status: 400 }
       );
     }
