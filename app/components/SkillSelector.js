@@ -240,19 +240,14 @@ export default function SkillSelector({ selectedSkillIds = [], onChange }) {
                       <label
                         key={skill.id}
                         className={`skill-checkbox ${isSelected ? 'selected' : ''}`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          handleSkillToggle(skill.id, e);
-                        }}
                       >
                         <input
                           type="checkbox"
                           checked={isSelected}
                           onChange={(e) => {
                             e.stopPropagation();
+                            handleSkillToggle(skill.id, e);
                           }}
-                          onClick={(e) => e.stopPropagation()}
                         />
                         <span>{skill.name}</span>
                       </label>
@@ -368,6 +363,7 @@ export default function SkillSelector({ selectedSkillIds = [], onChange }) {
           cursor: pointer;
           transition: all 0.2s;
           font-size: 0.875rem;
+          color: #374151;
         }
 
         .skill-checkbox:hover {
